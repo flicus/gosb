@@ -1,0 +1,65 @@
+<div class="card">
+  <p-dataView #dv [rows]="9" [value]="players" filterBy="name" layout="list">
+    <ng-template pTemplate="header">
+      <div class="player-header">
+        <div class="p-inputgroup new-user">
+          <div class="p-input-icon-left p-float-label">
+            <i class="pi pi-user-plus"></i>
+            <input #newPlayer (keypress)="checkAndAdd($event, newPlayer.value)" class="p-inputtext-sm" id="newPlayer" pInputText type="text">
+            <label for="newPlayer">Новый игрок</label>
+          </div>
+          <button (click)="addPlayer(newPlayer.value)" icon="pi pi-check" pButton type="button"></button>
+        </div>
+
+        <span class="p-input-icon-left p-float-label">
+          <i class="pi pi-search"></i>
+          <input #si (input)="dv.filter(si.value)" class="p-inputtext-sm" id="search" pInputText type="search">
+          <label for="search">Искать по имени</label>
+        </span>
+        <!--        <p-dataViewLayoutOptions></p-dataViewLayoutOptions>-->
+      </div>
+    </ng-template>
+
+    <ng-template let-player pTemplate="listItem">
+      <div class="player-list-item">
+        <div class="player-list-detail">
+          <p-avatar icon="pi pi-user"></p-avatar>
+          <p-inplace [closable]=true class="player-name">
+            <ng-template pTemplate="display">{{player.name}}</ng-template>
+            <ng-template pTemplate="content">
+              <input pInputText type="text" value="{{player.name}}">
+            </ng-template>
+          </p-inplace>
+          <!--          <div class="player-name"></div>-->
+        </div>
+        <div class="player-list-action">
+          <button (click)="deletePlayer(player.id)" class="p-button-rounded p-button-danger p-button-outlined p-button-sm" icon="pi pi-times" pButton pRipple type="button"></button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template let-player pTemplate="gridItem">
+      <div class="p-col-12 p-md-4">
+        <div class="player-grid-item card">
+          <div class="player-grid-item-top">
+            <!--            <div>-->
+            <!--              <i class="pi pi-tag player-category-icon"></i>-->
+            <!--              <span class="player-category">{{product.category}}</span>-->
+            <!--            </div>-->
+            <!--            <span [class]="'player-badge status-' + product.inventoryStatus.toLowerCase()">{{product.inventoryStatus}}</span>-->
+          </div>
+          <div class="player-grid-item-content">
+            <p-avatar icon="pi pi-user"></p-avatar>
+            <div class="player-name">{{player.name}}</div>
+            <!--            <div class="player-description">{{product.description}}</div>-->
+            <!--            <p-rating [ngModel]="product.rating" [readonly]="true" [cancel]="false"></p-rating>-->
+          </div>
+          <div class="player-grid-item-bottom">
+            <!--            <span class="player-price">${{product.price}}</span>-->
+            <p-button icon="pi pi-shopping-cart"></p-button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </p-dataView>
+</div>
+

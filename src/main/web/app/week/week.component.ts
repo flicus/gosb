@@ -161,7 +161,7 @@ export class WeekComponent implements OnInit {
     return "" + round(d, 2);
   }
 
-  onDragStart(event) {
+  onDragStart(event: any) {
 
   }
 

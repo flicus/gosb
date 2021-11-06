@@ -29,7 +29,7 @@
       <td>{{player.player.name}}</td>
       <td>
         <div [id]="getBattle('BATTLE2', player.battleLayouts)" class="bv">
-          <p-tag (onDragEnd)="onDragEnd()" (onDragStart)="onDragStart()" (onDrop)="onDrop()" class="d-tag"
+          <p-tag (onDragEnd)="onDragEnd()" (onDragStart)="onDragStart($event)" (onDrop)="onDrop()" class="d-tag"
                  pDraggable="{{player.player.id}}" pDroppable="{{player.player.id}}" value="{{getBattle('BATTLE2', player.battleLayouts).defence1}}"></p-tag>
           <p-tag class="d-tag" pDraggable="{{player.player.id}}" pDroppable="{{player.player.id}}" value="{{getBattle('BATTLE2', player.battleLayouts).defence2}}"></p-tag>
           <!--          {{getBattle('BATTLE2', player.battleLayouts).defence1}}-->

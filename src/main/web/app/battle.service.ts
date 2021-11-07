@@ -4,6 +4,7 @@ import {MessageService} from './message.service';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
 import {Week} from "./model/week";
+import {PlayerLayout} from "./model/playerLayout";
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class BattleService {
   httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
   };
-  private weekUrl = 'http://127.0.0.1:9090/api/week';
+  private weekUrl = '/api/week';
 
   constructor(private http: HttpClient,
               private messageService: MessageService) {
@@ -24,6 +25,23 @@ export class BattleService {
       .pipe(
         tap(_ => this.log('fetched players')),
         catchError(this.handleError<Week>('getPlayers', undefined))
+      );
+  }
+
+  addPlayerLayout(playerLayout: PlayerLayout): Observable<PlayerLayout> {
+    return this.http.post<PlayerLayout>(this.weekUrl, playerLayout, this.httpOptions)
+      .pipe(
+        tap(_ => this.log("add player layout")),
+        catchError(this.handleError<PlayerLayout>('addPlayerLayout', undefined))
+      );
+  }
+
+  updateWeek(week: Week): Observable<Week> {
+    const url = `${this.weekUrl}/${week.date}`;
+    return this.http.put<Week>(url, week, this.httpOptions)
+      .pipe(
+        tap(_ => this.log("update week")),
+        catchError(this.handleError<Week>('update week', undefined))
       );
   }
 

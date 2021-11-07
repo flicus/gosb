@@ -24,6 +24,10 @@
     cursor: pointer;
   }
 
+  .weak {
+    background: rgba(var(--primary-color), 0.4);
+  }
+
   .d-chip {
     //background: var(--primary-color);
     //color: var(--primary-color-text);
@@ -42,5 +46,17 @@
   .in-table {
     width: 6rem;
     height: 1rem;
+  }
+
+  .p-draggable-enter {
+    border-style: solid;
+    border-color: blueviolet;;
+    border-width: 1px;
+  }
+
+  .c-draggable {
+    border-style: solid;
+    border-color: var(--primary-color-text);
+    border-width: 1px;
   }
 }

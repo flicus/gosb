@@ -3,5 +3,8 @@ import {BattleLayout} from "./battleLayout";
 
 export interface PlayerLayout {
   player: Player;
-  battleLayouts: BattleLayout[];
+  b2: BattleLayout;
+  b3: BattleLayout;
+  b5: BattleLayout;
+  b7: BattleLayout;
 }

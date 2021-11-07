@@ -24,21 +24,22 @@ export class PlayersComponent implements OnInit {
       .subscribe(players => this.players = players);
   }
 
-  addPlayer(name: string): void {
-    name = name.trim();
+  addPlayer(element: HTMLInputElement): void {
+    let name: string = element.value.trim();
     if (!name) {
       return;
     }
     this.playerService.addPlayer({name} as Player)
       .subscribe(player => {
         console.error(player);
-        this.players.push(player)
+        this.players.push(player);
+        element.value = '';
       });
   }
 
-  checkAndAdd(event: KeyboardEvent, name: string): void {
+  checkAndAdd(event: KeyboardEvent, element: HTMLInputElement): void {
     if (event.key == "Enter") {
-      this.addPlayer(name);
+      this.addPlayer(element);
     }
   }
 

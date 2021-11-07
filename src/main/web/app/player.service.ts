@@ -13,7 +13,7 @@ export class PlayerService {
   httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
   };
-  private playersUrl = 'http://127.0.0.1:9090/api/player';
+  private playersUrl = '/api/player';
 
   constructor(private http: HttpClient,
               private messageService: MessageService) {

@@ -1,6 +1,5 @@
 package org.schors.gos;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +10,6 @@ import org.schors.gos.model.Week;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,13 +63,23 @@ public class BattleRepository {
             List<PlayerLayout> newLayouts = week.getPlayerLayouts().stream()
                                                 .filter(pl -> !pl.getPlayer()
                                                                  .getId()
-                                                                 .equals(playerLayout.getPlayer().getId()))
-                                                .collect(Collectors.toList());
-            week.setPlayerLayouts(newLayouts);
+                                                  .equals(playerLayout.getPlayer().getId()))
+              .collect(Collectors.toList());
+          newLayouts.add(playerLayout);
+          week.setPlayerLayouts(newLayouts);
         } else {
-            week.getPlayerLayouts().add(playerLayout);
+          week.getPlayerLayouts().add(playerLayout);
         }
-        map.put(week.getDate(), objectMapper.writeValueAsString(week));
-        return week;
+      map.put(week.getDate(), objectMapper.writeValueAsString(week));
+      return week;
     }
+
+  @SneakyThrows
+  public Week updateWeek(String date, Week newWeek) {
+    String weekString = map.get(date);
+    if (weekString != null) {
+      map.put(date, objectMapper.writeValueAsString(newWeek));
+    }
+    return newWeek;
+  }
 }

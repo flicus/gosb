@@ -22,6 +22,7 @@ import {ChipModule} from "primeng/chip";
 import {TodayComponent} from './today/today.component';
 import {TagModule} from "primeng/tag";
 import {DragDropModule} from "primeng/dragdrop";
+import {ScrollTopModule} from "primeng/scrolltop";
 
 
 @NgModule({
@@ -49,7 +50,8 @@ import {DragDropModule} from "primeng/dragdrop";
     TableModule,
     ChipModule,
     TagModule,
-    DragDropModule
+    DragDropModule,
+    ScrollTopModule
   ],
   providers: [],
   bootstrap: [AppComponent]

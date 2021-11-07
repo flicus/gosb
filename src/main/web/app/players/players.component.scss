@@ -4,6 +4,10 @@
     font-weight: normal;
   }
 
+  .c-spacing {
+    margin-left: 1rem;
+  }
+
   .new-user {
     width: 14rem;
     font-weight: normal;
@@ -19,122 +23,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    //font-size: 1.5rem;
-    //font-weight: 700;
     padding-left: 1rem;
   }
 
-  .player-description {
-    margin: 0 0 1rem 0;
-  }
 
-  .player-category-icon {
-    vertical-align: middle;
-    margin-right: .5rem;
-  }
-
-  .player-category {
-    font-weight: 600;
-    vertical-align: middle;
-  }
-
-  .player-list-item {
-    display: flex;
-    align-items: center;
-    //padding: 1rem;
-    width: 100%;
-
-    img {
-      width: 150px;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-      margin-right: 2rem;
-    }
-
-    .player-list-detail {
-      display: flex;
-      flex-direction: row;
-      flex: 1 1 0;
-    }
-
-    .p-rating {
-      margin: 0 0 .5rem 0;
-    }
-
-    .player-price {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: .5rem;
-      align-self: flex-end;
-    }
-
-    .player-list-action {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .p-button {
-      margin-bottom: .5rem;
-    }
-  }
-
-  .player-grid-item {
-    margin: .5em;
-    border: 1px solid var(--surface-d);
-
-    .player-grid-item-top,
-    .player-grid-item-bottom {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    img {
-      width: 75%;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-      margin: 2rem 0;
-    }
-
-    .player-grid-item-content {
-      text-align: center;
-    }
-
-    .player-price {
-      font-size: 1.5rem;
-      font-weight: 600;
-    }
-  }
-}
-
-
-@media screen and (max-width: 576px) {
-  :host ::ng-deep .player-list-item {
-    flex-direction: column;
-    align-items: center;
-
-    img {
-      width: 75%;
-      margin: 2rem 0;
-    }
-
-    .player-list-detail {
-      text-align: center;
-    }
-
-    .player-price {
-      align-self: center;
-    }
-
-    .player-list-action {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .player-list-action {
-      margin-top: 2rem;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-    }
-  }
 }

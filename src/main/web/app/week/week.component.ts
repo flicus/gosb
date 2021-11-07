@@ -7,7 +7,7 @@ import {PlayerLayout} from "../model/playerLayout";
 import {BattleLayout} from "../model/battleLayout";
 import {WeekTotal} from "../model/weekTotal";
 import {from, Observable} from "rxjs";
-import {concatMap, filter, reduce} from "rxjs/operators";
+import {reduce} from "rxjs/operators";
 
 function round(value: number, decimals: number) {
   // return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
@@ -34,6 +34,11 @@ export class WeekComponent implements OnInit {
     defenceB7: ""
   }
 
+  // @ts-ignore
+  draggedElement: BattleLayout = null;
+  // @ts-ignore
+  draggedField: string = null;
+
   constructor(private battleService: BattleService, private playerService: PlayerService) {
   }
 
@@ -46,8 +51,15 @@ export class WeekComponent implements OnInit {
       .subscribe(value => {
         this.players = value;
         this.battleService.getWeek()
-          .subscribe(value => this.week = value);
+          .subscribe(value => {
+            this.week = value
+            this.calculateWeekTotal();
+          });
       });
+  }
+
+  isWeak(power: string): boolean {
+    return this.s2d(power) < 1_000_000_000;
   }
 
   filter(): Player[] {
@@ -60,59 +72,58 @@ export class WeekComponent implements OnInit {
   addToBattle(player: Player) {
     let playerLayout: PlayerLayout = {
       player: player,
-      battleLayouts: [
-        {battleType: "BATTLE2", attack1: "0", attack2: "0", defence1: "0", defence2: "0"},
-        {battleType: "BATTLE3", attack1: "0", attack2: "0", defence1: "0", defence2: "0"},
-        {battleType: "BATTLE5", attack1: "0", attack2: "0", defence1: "0", defence2: "0"},
-        {battleType: "BATTLE7", attack1: "0", attack2: "0", defence1: "0", defence2: "0"}
-      ]
+      b2: {attack1: "0", attack2: "0", defence1: "0", defence2: "0"},
+      b3: {attack1: "0", attack2: "0", defence1: "0", defence2: "0"},
+      b5: {attack1: "0", attack2: "0", defence1: "0", defence2: "0"},
+      b7: {attack1: "0", attack2: "0", defence1: "0", defence2: "0"}
     }
-    this.week.playerLayouts.push(playerLayout);
-    this.calculateWeekTotal();
+
+    this.battleService.addPlayerLayout(playerLayout)
+      .subscribe(value => {
+        this.week.playerLayouts.push(playerLayout);
+        this.calculateWeekTotal();
+      });
+
   }
 
-  getBattle(battleType: string, battles: BattleLayout[]): BattleLayout {
-    return battles.filter(value => value.battleType == battleType)[0];
+  updateWeek(): void {
+    this.battleService.updateWeek(this.week)
+      .subscribe(value => this.calculateWeekTotal());
   }
 
   calculateWeekTotal(): void {
-    this
-      .getReducedBattle("BATTLE2")
+    this.getReducedBattle()
       .subscribe(value => {
-        this.weekTotal.attackB2 = value.attack1;
-        this.weekTotal.defenceB2 = value.defence1;
-      });
-    this
-      .getReducedBattle("BATTLE3")
-      .subscribe(value => {
-        this.weekTotal.attackB3 = value.attack1;
-        this.weekTotal.defenceB3 = value.defence1;
-      });
-    this
-      .getReducedBattle("BATTLE5")
-      .subscribe(value => {
-        this.weekTotal.attackB5 = value.attack1;
-        this.weekTotal.defenceB5 = value.defence1;
-      });
-    this
-      .getReducedBattle("BATTLE7")
-      .subscribe(value => {
-        this.weekTotal.attackB7 = value.attack1;
-        this.weekTotal.defenceB7 = value.defence1;
+        this.weekTotal.attackB2 = value.b2.attack1;
+        this.weekTotal.defenceB2 = value.b2.defence1;
+        this.weekTotal.attackB3 = value.b3.attack1;
+        this.weekTotal.defenceB3 = value.b3.defence1;
+        this.weekTotal.attackB5 = value.b5.attack1;
+        this.weekTotal.defenceB5 = value.b5.defence1;
+        this.weekTotal.attackB7 = value.b7.attack1;
+        this.weekTotal.defenceB7 = value.b7.defence1;
       });
   }
 
-  getReducedBattle(battleType: string): Observable<BattleLayout> {
-    let seed: BattleLayout = {
-      attack1: "0", attack2: "0", battleType: "", defence1: "0", defence2: "0"
+  getReducedBattle(): Observable<PlayerLayout> {
+    let seed: PlayerLayout = {
+      player: {id: "", name: ""},
+      b2: {attack1: "0", attack2: "0", defence1: "0", defence2: "0"},
+      b3: {attack1: "0", attack2: "0", defence1: "0", defence2: "0"},
+      b5: {attack1: "0", attack2: "0", defence1: "0", defence2: "0"},
+      b7: {attack1: "0", attack2: "0", defence1: "0", defence2: "0"}
     }
 
     return from(this.week.playerLayouts)
-      .pipe(concatMap(value => from(value.battleLayouts)))
-      .pipe(filter(value => value.battleType == battleType))
       .pipe(reduce((acc, one) => {
-        acc.attack1 = this.accumulateAttacks(acc.attack1, one.attack1, one.attack2);
-        acc.defence1 = this.accumulateDefence(acc.defence1, one.defence1, one.defence2);
+        acc.b2.attack1 = this.accumulateAttacks(acc.b2.attack1, one.b2.attack1, one.b2.attack2);
+        acc.b2.defence1 = this.accumulateDefence(acc.b2.defence1, one.b2.defence1, one.b2.defence2);
+        acc.b3.attack1 = this.accumulateAttacks(acc.b3.attack1, one.b3.attack1, one.b3.attack2);
+        acc.b3.defence1 = this.accumulateDefence(acc.b3.defence1, one.b3.defence1, one.b3.defence2);
+        acc.b5.attack1 = this.accumulateAttacks(acc.b5.attack1, one.b5.attack1, one.b5.attack2);
+        acc.b5.defence1 = this.accumulateDefence(acc.b5.defence1, one.b5.defence1, one.b5.defence2);
+        acc.b7.attack1 = this.accumulateAttacks(acc.b7.attack1, one.b7.attack1, one.b7.attack2);
+        acc.b7.defence1 = this.accumulateDefence(acc.b7.defence1, one.b7.defence1, one.b7.defence2);
         return acc;
       }, seed))
   }
@@ -161,15 +172,27 @@ export class WeekComponent implements OnInit {
     return "" + round(d, 2);
   }
 
-  onDragStart(event: any) {
+  onDragStart(battleLayout: BattleLayout, field: string) {
+    this.draggedElement = battleLayout;
+    this.draggedField = field;
 
   }
 
   onDragEnd() {
-
+    this.draggedElement = null as any;
+    this.draggedField = null as any;
   }
 
-  onDrop() {
+  onDrop(battleLayout: BattleLayout, field: string) {
+    if (this.draggedElement) {
+      // @ts-ignore
+      let value: string = battleLayout[field];
+      // @ts-ignore
+      battleLayout[field] = this.draggedElement[this.draggedField];
+      // @ts-ignore
+      this.draggedElement[this.draggedField] = value;
+      this.calculateWeekTotal();
+    }
 
   }
 }

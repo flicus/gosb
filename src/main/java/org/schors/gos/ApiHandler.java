@@ -5,6 +5,7 @@ import io.vertx.ext.web.RoutingContext;
 import lombok.RequiredArgsConstructor;
 import org.schors.gos.model.Player;
 import org.schors.gos.model.PlayerLayout;
+import org.schors.gos.model.Week;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,18 +33,25 @@ public class ApiHandler {
         rc.response().end(Json.encode(playerRepository.updatePlayer(rc.pathParam("id"), player)));
     }
 
-    public void deletePlayer(RoutingContext rc) {
-        rc.response().end(Json.encode(playerRepository.deletePlayer(rc.pathParam("id"))));
-    }
+  public void deletePlayer(RoutingContext rc) {
+    rc.response().end(Json.encode(playerRepository.deletePlayer(rc.pathParam("id"))));
+  }
 
-    public void getCurrentWeek(RoutingContext rc) {
-        rc.response().end(Json.encode(battleRepository.getCurrentWeek()));
-    }
+  public void getCurrentWeek(RoutingContext rc) {
+    rc.response().end(Json.encode(battleRepository.getCurrentWeek()));
+  }
 
-    public void deleteWeek(RoutingContext rc) { rc.response().end(Json.encode(battleRepository.deleteWeek(rc.pathParam("id")))); }
+  public void deleteWeek(RoutingContext rc) {
+    rc.response().end(Json.encode(battleRepository.deleteWeek(rc.pathParam("id"))));
+  }
 
-    public void addPlayerLayout(RoutingContext rc) {
-        PlayerLayout playerLayout = rc.getBodyAsJson().mapTo(PlayerLayout.class);
-        rc.response().end(Json.encode(battleRepository.addPlayerLayout(playerLayout)));
-    }
+  public void updateWeek(RoutingContext rc) {
+    Week week = rc.getBodyAsJson().mapTo(Week.class);
+    rc.response().end(Json.encode(battleRepository.updateWeek(rc.pathParam("id"), week)));
+  }
+
+  public void addPlayerLayout(RoutingContext rc) {
+    PlayerLayout playerLayout = rc.getBodyAsJson().mapTo(PlayerLayout.class);
+    rc.response().end(Json.encode(battleRepository.addPlayerLayout(playerLayout)));
+  }
 }

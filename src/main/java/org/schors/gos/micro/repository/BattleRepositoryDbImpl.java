@@ -1,13 +1,14 @@
-package org.schors.gos;
+package org.schors.gos.micro.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micronaut.context.annotation.Requires;
+import jakarta.inject.Singleton;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.mapdb.DB;
 import org.mapdb.Serializer;
 import org.schors.gos.micro.model.PlayerLayout;
 import org.schors.gos.micro.model.Week;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -18,15 +19,16 @@ import java.util.stream.Collectors;
 
 import static java.time.DayOfWeek.MONDAY;
 
-@Component
 @Slf4j
-public class BattleRepository {
+@Singleton
+@Requires(property = "gos.data", value = "db")
+public class BattleRepositoryDbImpl implements BattleRepository {
 
   private final DB db;
   private final ObjectMapper objectMapper;
   private final ConcurrentMap<String, String> map;
 
-  public BattleRepository(DB db, ObjectMapper objectMapper) {
+  public BattleRepositoryDbImpl(DB db, ObjectMapper objectMapper) {
     this.db = db;
     this.objectMapper = objectMapper;
     map = db.hashMap("weeks", Serializer.STRING, Serializer.STRING).createOrOpen();

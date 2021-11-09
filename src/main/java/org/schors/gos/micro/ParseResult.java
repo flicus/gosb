@@ -1,4 +1,4 @@
-package org.schors.gos;
+package org.schors.gos.micro;
 
 public class ParseResult {
   private String[] rec7;

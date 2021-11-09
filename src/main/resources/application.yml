@@ -1,3 +1,6 @@
+gosb:
+  data: "db"
+#  dataLayer: "redis"
 micronaut:
   application:
     name: microGosb

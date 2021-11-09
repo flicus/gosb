@@ -1,4 +1,4 @@
-package org.schors.gos;
+package org.schors.gos.micro.bot;
 
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
@@ -8,6 +8,8 @@ import org.opencv.imgproc.Imgproc;
 import org.schors.gos.micro.model.BattleLayout;
 import org.schors.gos.micro.model.Player;
 import org.schors.gos.micro.model.PlayerLayout;
+import org.schors.gos.micro.repository.BattleRepositoryDbImpl;
+import org.schors.gos.micro.repository.PlayerRepositoryDbImpl;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
@@ -33,12 +35,12 @@ import java.util.stream.Stream;
 @Component
 public class RecognitionTestBot extends TelegramLongPollingBot {
 
-  private final PlayerRepository playerRepository;
-  private final BattleRepository battleRepository;
+  private final PlayerRepositoryDbImpl playerRepository;
+  private final BattleRepositoryDbImpl battleRepository;
   private PlayerLayout playerLayout = null;
   private List<Player> players = null;
 
-  public RecognitionTestBot(PlayerRepository playerRepository, BattleRepository battleRepository) {
+  public RecognitionTestBot(PlayerRepositoryDbImpl playerRepository, BattleRepositoryDbImpl battleRepository) {
     this.playerRepository = playerRepository;
     this.battleRepository = battleRepository;
   }

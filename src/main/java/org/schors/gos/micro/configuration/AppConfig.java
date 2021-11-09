@@ -1,4 +1,4 @@
-package org.schors.gos.configuration;
+package org.schors.gos.micro.configuration;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

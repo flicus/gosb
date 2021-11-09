@@ -1,4 +1,4 @@
-package org.schors.gos.model;
+package org.schors.gos.micro.model;
 
 public enum BattleType {
     BATTLE2,

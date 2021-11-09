@@ -3,9 +3,9 @@ package org.schors.gos;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import lombok.RequiredArgsConstructor;
-import org.schors.gos.model.Player;
-import org.schors.gos.model.PlayerLayout;
-import org.schors.gos.model.Week;
+import org.schors.gos.micro.model.Player;
+import org.schors.gos.micro.model.PlayerLayout;
+import org.schors.gos.micro.model.Week;
 import org.springframework.stereotype.Component;
 
 @Component

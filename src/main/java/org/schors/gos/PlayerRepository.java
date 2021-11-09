@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.mapdb.DB;
 import org.mapdb.Serializer;
-import org.schors.gos.model.Player;
+import org.schors.gos.micro.model.Player;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,19 +16,19 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PlayerRepository {
 
-    private DB db;
-    private ObjectMapper objectMapper;
-    private ConcurrentMap<String, String> map;
+  private final DB db;
+  private final ObjectMapper objectMapper;
+  private final ConcurrentMap<String, String> map;
 
-    public PlayerRepository(DB db, ObjectMapper objectMapper) {
-        this.db = db;
-        this.objectMapper = objectMapper;
-        map = db.hashMap("player", Serializer.STRING, Serializer.STRING).createOrOpen();
-    }
+  public PlayerRepository(DB db, ObjectMapper objectMapper) {
+    this.db = db;
+    this.objectMapper = objectMapper;
+    map = db.hashMap("player", Serializer.STRING, Serializer.STRING).createOrOpen();
+  }
 
-    public List<Player> getAllPlayers() {
-        return map
-            .values()
+  public List<Player> getAllPlayers() {
+    return map
+      .values()
             .stream()
             .map(s -> {
                 try {

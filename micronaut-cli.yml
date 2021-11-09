@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: org.schors.gos
+testFramework: junit
+sourceLanguage: java
+buildTool: maven
+features: [ annotation-api, app-name, h2, http-client, java, java-application, junit, logback, lombok, maven, mongo-reactive, reactor, reactor-http-client, readme, redis-lettuce, shade, testcontainers, undertow-server, yaml ]

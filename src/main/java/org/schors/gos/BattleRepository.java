@@ -5,8 +5,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.mapdb.DB;
 import org.mapdb.Serializer;
-import org.schors.gos.model.PlayerLayout;
-import org.schors.gos.model.Week;
+import org.schors.gos.micro.model.PlayerLayout;
+import org.schors.gos.micro.model.Week;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -22,19 +22,19 @@ import static java.time.DayOfWeek.MONDAY;
 @Slf4j
 public class BattleRepository {
 
-    private DB db;
-    private ObjectMapper objectMapper;
-    private ConcurrentMap<String, String> map;
+  private final DB db;
+  private final ObjectMapper objectMapper;
+  private final ConcurrentMap<String, String> map;
 
-    public BattleRepository(DB db, ObjectMapper objectMapper) {
-        this.db = db;
-        this.objectMapper = objectMapper;
-        map = db.hashMap("weeks", Serializer.STRING, Serializer.STRING).createOrOpen();
-    }
+  public BattleRepository(DB db, ObjectMapper objectMapper) {
+    this.db = db;
+    this.objectMapper = objectMapper;
+    map = db.hashMap("weeks", Serializer.STRING, Serializer.STRING).createOrOpen();
+  }
 
-    @SneakyThrows
-    public Week getCurrentWeek() {
-        Week week;
+  @SneakyThrows
+  public Week getCurrentWeek() {
+    Week week;
         LocalDate weekStart = LocalDate.now().with(MONDAY);
         String date = weekStart.format(DateTimeFormatter.BASIC_ISO_DATE);
         String weekString = map.get(date);

@@ -1,9 +1,8 @@
-package org.schors.gos.model;
+package org.schors.gos.micro.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 

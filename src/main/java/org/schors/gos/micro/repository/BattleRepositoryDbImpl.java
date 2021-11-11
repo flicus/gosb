@@ -21,7 +21,7 @@ import static java.time.DayOfWeek.MONDAY;
 
 @Slf4j
 @Singleton
-@Requires(property = "gos.data", value = "db")
+@Requires(property = "gosb.data", value = "db")
 public class BattleRepositoryDbImpl implements BattleRepository {
 
   private final DB db;

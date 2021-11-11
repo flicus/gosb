@@ -1,13 +1,7 @@
 package org.schors.gos.micro.controller;
 
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Delete;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.PathVariable;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Put;
-import lombok.RequiredArgsConstructor;
+import io.micronaut.http.annotation.*;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.schors.gos.micro.model.PlayerLayout;
 import org.schors.gos.micro.model.Week;
@@ -16,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 @Controller("/api/week")
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class WeekController {
 
   private BattleRepository battleRepository;

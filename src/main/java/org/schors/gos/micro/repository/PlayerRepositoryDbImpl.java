@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Singleton
-@Requires(property = "gos.data", value = "db")
+@Requires(property = "gosb.data", value = "db")
 public class PlayerRepositoryDbImpl implements PlayerRepository {
 
   private final DB db;

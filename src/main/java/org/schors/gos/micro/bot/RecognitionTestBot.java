@@ -10,7 +10,6 @@ import org.schors.gos.micro.model.Player;
 import org.schors.gos.micro.model.PlayerLayout;
 import org.schors.gos.micro.repository.BattleRepositoryDbImpl;
 import org.schors.gos.micro.repository.PlayerRepositoryDbImpl;
-import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
@@ -32,7 +31,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component
 public class RecognitionTestBot extends TelegramLongPollingBot {
 
   private final PlayerRepositoryDbImpl playerRepository;

@@ -21,6 +21,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.imageio.ImageIO;
+import javax.inject.Singleton;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -30,6 +31,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Singleton
 public class RecognitionTestBot extends TelegramLongPollingBot {
 
   private final PlayerRepositoryDbImpl playerRepository;

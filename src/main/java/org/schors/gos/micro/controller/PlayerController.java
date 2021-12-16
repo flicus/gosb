@@ -17,27 +17,29 @@ public class PlayerController {
 
   @Get
   public Flux<Player> get() {
-    return Flux.fromIterable(playerRepository.getAllPlayers());
+    log.debug("get all players");
+    return playerRepository.getAllPlayers();
   }
 
   @Get("/{id}")
   public Mono<Player> getById(@PathVariable String id) {
-    return Mono.just(playerRepository.getPlayerById(id));
+    return playerRepository.getPlayerById(id);
   }
 
   @Post
   public Mono<Player> create(@Body Player player) {
-    return Mono.just(playerRepository.createPlayer(player));
+    log.debug("create player: " + player);
+    return playerRepository.createPlayer(player);
   }
 
   @Put("/{id}")
   public Mono<Player> update(@PathVariable String id, @Body Player player) {
-    return Mono.just(playerRepository.updatePlayer(id, player));
+    return playerRepository.updatePlayer(id, player);
   }
 
   @Delete("/{id}")
   public Mono<Boolean> delete(@PathVariable String id) {
-    return Mono.just(playerRepository.deletePlayer(id));
+    return playerRepository.deletePlayer(id);
   }
 
 }

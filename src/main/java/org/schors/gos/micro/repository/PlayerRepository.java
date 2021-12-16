@@ -1,17 +1,17 @@
 package org.schors.gos.micro.repository;
 
 import org.schors.gos.micro.model.Player;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface PlayerRepository {
-  List<Player> getAllPlayers();
+  Flux<Player> getAllPlayers();
 
-  Player getPlayerById(String id);
+  Mono<Player> getPlayerById(String id);
 
-  Player createPlayer(Player player);
+  Mono<Player> createPlayer(Player player);
 
-  Player updatePlayer(String id, Player player);
+  Mono<Player> updatePlayer(String id, Player player);
 
-  Boolean deletePlayer(String id);
+  Mono<Boolean> deletePlayer(String id);
 }

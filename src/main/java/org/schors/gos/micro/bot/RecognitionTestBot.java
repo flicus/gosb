@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class RecognitionTestBot extends TelegramLongPollingBot {
@@ -206,15 +205,17 @@ public class RecognitionTestBot extends TelegramLongPollingBot {
         execute(SendMessage.builder()
           .chatId(String.valueOf(update.getMessage().getChatId()))
           .text(playerLayout.readable()).build());
-        players = playerRepository.getAllPlayers();
         InlineKeyboardMarkup.InlineKeyboardMarkupBuilder inlineKeyboardMarkupBuilder = InlineKeyboardMarkup.builder();
-        getTuples(players, 3).
-          forEach(tuple -> inlineKeyboardMarkupBuilder
-            .keyboardRow(tuple.map(player -> InlineKeyboardButton.builder()
-                .text(player.getName())
-                .callbackData(player.getId())
-                .build())
-              .collect(Collectors.toList())));
+        playerRepository
+          .getAllPlayers()
+          .window(3)
+          .doOnNext(playerFlux -> inlineKeyboardMarkupBuilder.keyboardRow(playerFlux.map(player -> InlineKeyboardButton.builder()
+              .text(player.getName())
+              .callbackData(player.getId())
+              .build())
+            .collectList()
+            .block()
+          ));
         execute(
           SendMessage.builder()
             .chatId(String.valueOf(update.getMessage().getChatId()))

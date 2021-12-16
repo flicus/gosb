@@ -2,30 +2,27 @@ package org.schors.gos.micro.repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.lettuce.core.api.StatefulRedisConnection;
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
-import org.mapdb.DB;
-import org.mapdb.Serializer;
 import org.schors.gos.micro.model.Player;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.concurrent.ConcurrentMap;
-
 @Slf4j
 @Singleton
-@Requires(property = "gosb.data", value = "db")
-public class PlayerRepositoryDbImpl implements PlayerRepository {
+@Requires(property = "gosb.data", value = "redis")
+public class PlayerRepositoryRedisImpl implements PlayerRepository {
 
-  private final DB db;
+  private static final String PLAYER = "player";
+
+  private final StatefulRedisConnection<String, String> connection;
   private final ObjectMapper objectMapper;
-  private final ConcurrentMap<String, String> map;
 
-  public PlayerRepositoryDbImpl(DB db, ObjectMapper objectMapper) {
-    this.db = db;
+  public PlayerRepositoryRedisImpl(StatefulRedisConnection<String, String> connection, ObjectMapper objectMapper) {
+    this.connection = connection;
     this.objectMapper = objectMapper;
-    map = db.hashMap("player", Serializer.STRING, Serializer.STRING).createOrOpen();
   }
 
   private Player str2pl(String str) {
@@ -48,17 +45,14 @@ public class PlayerRepositoryDbImpl implements PlayerRepository {
 
   @Override
   public Flux<Player> getAllPlayers() {
-    return Flux
-      .fromIterable(map.values())
-      .map(this::str2pl)
-      .onErrorContinue((throwable, o) -> {
-      });
+    return connection.reactive()
+      .hvals(PLAYER)
+      .map(this::str2pl);
   }
 
   @Override
   public Mono<Player> getPlayerById(String id) {
-    Player player = str2pl(map.get(id));
-    return player != null ? Mono.just(player) : Mono.error(new IllegalArgumentException("No or corrupted player"));
+    return connection.reactive().hget(PLAYER, id).map(this::str2pl);
   }
 
   @Override
@@ -66,22 +60,32 @@ public class PlayerRepositoryDbImpl implements PlayerRepository {
     if (player.getId() == null) {
       player.setId(String.valueOf(player.getName().hashCode()));
     }
-    map.putIfAbsent(player.getId(), pl2str(player));
-    return Mono.just(player);
+    return connection.reactive()
+      .hexists(PLAYER, player.getId())
+      .flatMap(aBoolean -> {
+        Mono<Player> result;
+        if (aBoolean) {
+          log.warn("player already exist: " + player.getId());
+          result = Mono.error(new IllegalArgumentException("Already exist"));
+        } else {
+          log.debug("creating player: " + player);
+          result = connection.reactive()
+            .hset(PLAYER, player.getId(), pl2str(player))
+            .map(aBoolean1 -> player);
+        }
+        return result;
+      });
   }
 
   @Override
   public Mono<Player> updatePlayer(String id, Player player) {
-    String str = pl2str(player);
-    if (str != null) {
-      map.put(id, str);
-      return Mono.just(player);
-    }
-    return Mono.error(new IllegalArgumentException(""));
+    return connection.reactive()
+      .hset(PLAYER, id, pl2str(player))
+      .map(aBoolean -> player);
   }
 
   @Override
   public Mono<Boolean> deletePlayer(String id) {
-    return Mono.just(map.remove(id) != null);
+    return connection.reactive().hdel(PLAYER, id).map(aLong -> aLong > 0);
   }
 }

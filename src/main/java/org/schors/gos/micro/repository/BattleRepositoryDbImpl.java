@@ -9,6 +9,8 @@ import org.mapdb.DB;
 import org.mapdb.Serializer;
 import org.schors.gos.micro.model.PlayerLayout;
 import org.schors.gos.micro.model.Week;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -34,54 +36,71 @@ public class BattleRepositoryDbImpl implements BattleRepository {
     map = db.hashMap("weeks", Serializer.STRING, Serializer.STRING).createOrOpen();
   }
 
+  @Override
+  public Flux<String> getWeeks() {
+    return Flux.fromIterable(map.keySet());
+  }
+
   @SneakyThrows
-  public Week getCurrentWeek() {
+  @Override
+  public Mono<Week> getWeek(String id) {
+    String weekString = map.get(id);
+    return Mono.just(objectMapper.readValue(weekString, Week.class));
+  }
+
+  @SneakyThrows
+  public Mono<Week> getCurrentWeek() {
+    return Mono.just(getCurrentWeekInt());
+  }
+
+  @SneakyThrows
+  private Week getCurrentWeekInt() {
     Week week;
-        LocalDate weekStart = LocalDate.now().with(MONDAY);
-        String date = weekStart.format(DateTimeFormatter.BASIC_ISO_DATE);
-        String weekString = map.get(date);
-        if (weekString == null) {
-            week = new Week();
-            week.setDate(date);
-            week.setPlayerLayouts(new ArrayList<>());
-            weekString = objectMapper.writeValueAsString(week);
-            map.put(date, weekString);
-        }
-        return objectMapper.readValue(weekString, Week.class);
+    LocalDate weekStart = LocalDate.now().with(MONDAY);
+    String date = weekStart.format(DateTimeFormatter.BASIC_ISO_DATE);
+    String weekString = map.get(date);
+    if (weekString == null) {
+      week = new Week();
+      week.setDate(date);
+      week.setPlayerLayouts(new ArrayList<>());
+      weekString = objectMapper.writeValueAsString(week);
+      map.put(date, weekString);
     }
+    return objectMapper.readValue(weekString, Week.class);
+  }
 
-    public Boolean deleteWeek(String date) {
-        return map.remove(date) != null;
-    }
-
-    @SneakyThrows
-    public Week addPlayerLayout(PlayerLayout playerLayout) {
-        Week week = getCurrentWeek();
-        boolean alreadyThere = week
-            .getPlayerLayouts()
-            .stream()
-            .anyMatch(pl -> pl.getPlayer().getId().equals(playerLayout.getPlayer().getId()));
-        if (alreadyThere) {
-            List<PlayerLayout> newLayouts = week.getPlayerLayouts().stream()
-                                                .filter(pl -> !pl.getPlayer()
-                                                                 .getId()
-                                                  .equals(playerLayout.getPlayer().getId()))
-              .collect(Collectors.toList());
-          newLayouts.add(playerLayout);
-          week.setPlayerLayouts(newLayouts);
-        } else {
-          week.getPlayerLayouts().add(playerLayout);
-        }
-      map.put(week.getDate(), objectMapper.writeValueAsString(week));
-      return week;
-    }
+  public Mono<Boolean> deleteWeek(String date) {
+    return Mono.just(map.remove(date) != null);
+  }
 
   @SneakyThrows
-  public Week updateWeek(String date, Week newWeek) {
+  public Mono<Week> addPlayerLayout(PlayerLayout playerLayout) {
+    Week week = getCurrentWeekInt();
+    boolean alreadyThere = week
+      .getPlayerLayouts()
+      .stream()
+      .anyMatch(pl -> pl.getPlayer().getId().equals(playerLayout.getPlayer().getId()));
+    if (alreadyThere) {
+      List<PlayerLayout> newLayouts = week.getPlayerLayouts().stream()
+        .filter(pl -> !pl.getPlayer()
+          .getId()
+          .equals(playerLayout.getPlayer().getId()))
+        .collect(Collectors.toList());
+      newLayouts.add(playerLayout);
+      week.setPlayerLayouts(newLayouts);
+    } else {
+      week.getPlayerLayouts().add(playerLayout);
+    }
+    map.put(week.getDate(), objectMapper.writeValueAsString(week));
+    return Mono.just(week);
+  }
+
+  @SneakyThrows
+  public Mono<Week> updateWeek(String date, Week newWeek) {
     String weekString = map.get(date);
     if (weekString != null) {
       map.put(date, objectMapper.writeValueAsString(newWeek));
     }
-    return newWeek;
+    return Mono.just(newWeek);
   }
 }

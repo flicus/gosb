@@ -97,22 +97,6 @@
       <version>3.0.8</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.tess4j</groupId>
-      <artifactId>tess4j</artifactId>
-      <version>4.3.0</version>
-      <!--      <exclusions>-->
-      <!--        <exclusion>-->
-      <!--          <groupId>org.jboss.logging</groupId>-->
-      <!--          <artifactId>jboss-logging</artifactId>-->
-      <!--        </exclusion>-->
-      <!--      </exclusions>-->
-    </dependency>
-    <dependency>
-      <groupId>org.openpnp</groupId>
-      <artifactId>opencv</artifactId>
-      <version>[4.3.0,)</version>
-    </dependency>
-    <dependency>
       <groupId>org.telegram</groupId>
       <artifactId>telegrambots-meta</artifactId>
       <version>6.1.0</version>
@@ -122,11 +106,6 @@
       <artifactId>guava</artifactId>
       <version>31.1-jre</version>
     </dependency>
-    <!--    <dependency>-->
-    <!--      <groupId>org.telegram</groupId>-->
-    <!--      <artifactId>telegrambots</artifactId>-->
-    <!--      <version>5.4.0</version>-->
-    <!--    </dependency>-->
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -139,15 +118,15 @@
     </dependency>
   </dependencies>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.jboss.logging</groupId>
-        <artifactId>jboss-logging</artifactId>
-        <version>3.4.1.Final</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
+  <!--  <dependencyManagement>-->
+  <!--    <dependencies>-->
+  <!--      <dependency>-->
+  <!--        <groupId>org.jboss.logging</groupId>-->
+  <!--        <artifactId>jboss-logging</artifactId>-->
+  <!--        <version>3.4.1.Final</version>-->
+  <!--      </dependency>-->
+  <!--    </dependencies>-->
+  <!--  </dependencyManagement>-->
 
   <build>
     <plugins>

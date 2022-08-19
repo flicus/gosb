@@ -65,12 +65,15 @@ public class BattleRepositoryDbImpl implements BattleRepository {
       week.setPlayerLayouts(new ArrayList<>());
       weekString = objectMapper.writeValueAsString(week);
       map.put(date, weekString);
+      db.commit();
     }
     return objectMapper.readValue(weekString, Week.class);
   }
 
   public Mono<Boolean> deleteWeek(String date) {
-    return Mono.just(map.remove(date) != null);
+    Mono<Boolean> res = Mono.just(map.remove(date) != null);
+    db.commit();
+    return res;
   }
 
   @SneakyThrows
@@ -92,6 +95,7 @@ public class BattleRepositoryDbImpl implements BattleRepository {
       week.getPlayerLayouts().add(playerLayout);
     }
     map.put(week.getDate(), objectMapper.writeValueAsString(week));
+    db.commit();
     return Mono.just(week);
   }
 
@@ -100,6 +104,7 @@ public class BattleRepositoryDbImpl implements BattleRepository {
     String weekString = map.get(date);
     if (weekString != null) {
       map.put(date, objectMapper.writeValueAsString(newWeek));
+      db.commit();
     }
     return Mono.just(newWeek);
   }

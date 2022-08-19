@@ -1,16 +1,25 @@
 package org.schors.gos.micro.bot;
 
-import net.sourceforge.tess4j.Tesseract;
-import net.sourceforge.tess4j.TesseractException;
-import org.opencv.core.*;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
-import org.schors.gos.micro.model.BattleLayout;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.annotation.Value;
+import io.micronaut.context.event.StartupEvent;
+import io.micronaut.runtime.event.annotation.EventListener;
+import jakarta.inject.Singleton;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
+import org.schors.gos.micro.BattleConfig;
+import org.schors.gos.micro.BirthdayConfig;
 import org.schors.gos.micro.model.Player;
 import org.schors.gos.micro.model.PlayerLayout;
+import org.schors.gos.micro.notifier.DeleteMessageJob;
+import org.schors.gos.micro.notifier.SendBirthdayJob;
+import org.schors.gos.micro.notifier.SendMessageJob;
 import org.schors.gos.micro.repository.BattleRepositoryDbImpl;
 import org.schors.gos.micro.repository.PlayerRepositoryDbImpl;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -19,145 +28,205 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import javax.imageio.ImageIO;
-import javax.inject.Singleton;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.quartz.DateBuilder.futureDate;
+
+@Slf4j
 @Singleton
+@Requires(property = "gosb.bot.enabled", value = "true")
+@Requires(property = "gosb.bot.new", value = "false")
 public class RecognitionTestBot extends TelegramLongPollingBot {
 
   private final PlayerRepositoryDbImpl playerRepository;
   private final BattleRepositoryDbImpl battleRepository;
   private PlayerLayout playerLayout = null;
   private List<Player> players = null;
+  private Scheduler scheduler;
+  private BattleConfig battleConfig;
+  private BirthdayConfig birthdayConfig;
 
-  public RecognitionTestBot(PlayerRepositoryDbImpl playerRepository, BattleRepositoryDbImpl battleRepository) {
+  @Value("${gosb.bot.name}")
+  private String botName;
+
+  @Value("${gosb.bot.token}")
+  private String botToken;
+
+  public RecognitionTestBot(PlayerRepositoryDbImpl playerRepository, BattleRepositoryDbImpl battleRepository,
+                            BattleConfig battleConfig, BirthdayConfig birthdayConfig) {
     this.playerRepository = playerRepository;
     this.battleRepository = battleRepository;
+    this.battleConfig = battleConfig;
+    this.birthdayConfig = birthdayConfig;
   }
 
-  private static PlayerLayout recognize(File file) {
+  @SneakyThrows
+  @EventListener
+  public void onStartupEvent(StartupEvent event) {
+    TelegramBotsApi api = new TelegramBotsApi(DefaultBotSession.class);
+    api.registerBot(this);
 
-    System.out.println(file.getAbsolutePath());
-    Mat img = Imgcodecs.imread(file.getAbsolutePath());
+    scheduler = StdSchedulerFactory.getDefaultScheduler();
+    scheduler.start();
 
-    Mat grey = new Mat();
-    Imgproc.cvtColor(img, grey, Imgproc.COLOR_BGR2GRAY);
-    Mat initialGrey = grey.clone();
+    JobDetail job = JobBuilder.newJob(SendMessageJob.class).withIdentity("battleNotify").build();
+    job.getJobDataMap().put("msg", battleConfig.getMessages());
+    job.getJobDataMap().put("bot", this);
 
-    Imgproc.adaptiveThreshold(grey, grey, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 15, -2);
-    int horizontal_size = grey.cols() / 2;
-    Mat horizontalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(horizontal_size, 1));
-    Imgproc.dilate(grey, grey, Mat.ones(2, 2, CvType.CV_8U));
-    Imgproc.erode(grey, grey, horizontalStructure);
-    Imgproc.dilate(grey, grey, horizontalStructure);
-    Core.bitwise_not(grey, grey);
+    JobDetail endBattle = JobBuilder.newJob(SendMessageJob.class).withIdentity("endBattleNotify").build();
+    endBattle.getJobDataMap().put("msg", battleConfig.getEnds());
+    endBattle.getJobDataMap().put("bot", this);
 
-    Mat hierarchy = new Mat();
-    List<MatOfPoint> list = new ArrayList<>();
-    Imgproc.findContours(grey, list, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+    JobDetail birthday = JobBuilder.newJob(SendBirthdayJob.class).withIdentity("birtday").build();
+    birthday.getJobDataMap().put("bot", this);
 
-    Tesseract tesseract = new Tesseract();
-    tesseract.setDatapath("/home/flicus/tera/java/tessdata_best-main");
-    tesseract.setLanguage("eng");
-    tesseract.setTessVariable("tessedit_char_whitelist", "0123456789BMKT.");
-    tesseract.setPageSegMode(8);
+    Trigger trigger12 = TriggerBuilder
+      .newTrigger()
+      .startNow()
+      .withIdentity("battle12")
+      .withSchedule(DailyTimeIntervalScheduleBuilder
+        .dailyTimeIntervalSchedule()
+        .onDaysOfTheWeek(DateBuilder.TUESDAY,
+          DateBuilder.WEDNESDAY,
+          DateBuilder.FRIDAY,
+          DateBuilder.SUNDAY)
+        .startingDailyAt(TimeOfDay
+          .hourAndMinuteOfDay(
+            12,
+            0))
+        // .withInterval(3,
+        // DateBuilder.IntervalUnit.HOUR)
+        .withRepeatCount(0))
+      .forJob(job)
+      .build();
 
-    List<String> strings = new ArrayList<>();
+    Trigger trigger15 = TriggerBuilder
+      .newTrigger()
+      .startNow()
+      .withIdentity("battle15")
+      .withSchedule(DailyTimeIntervalScheduleBuilder
+        .dailyTimeIntervalSchedule()
+        .onDaysOfTheWeek(DateBuilder.TUESDAY,
+          DateBuilder.WEDNESDAY,
+          DateBuilder.FRIDAY,
+          DateBuilder.SUNDAY)
+        .startingDailyAt(TimeOfDay
+          .hourAndMinuteOfDay(
+            15,
+            0))
+        // .withInterval(3,
+        // DateBuilder.IntervalUnit.HOUR)
+        .withRepeatCount(0))
+      .forJob(job)
+      .build();
 
-    list.stream()
-      .map(matOfPoint -> Imgproc.boundingRect(matOfPoint))
-      .map(rect -> initialGrey.submat(rect))
-      .filter(mat -> mat.height() > 100)
-      .forEach(first -> {
-        Mat res = first.clone();
-        Imgproc.medianBlur(first, first, 5);
+    Trigger trigger18 = TriggerBuilder
+      .newTrigger()
+      .startNow()
+      .withIdentity("battle18")
+      .withSchedule(DailyTimeIntervalScheduleBuilder
+        .dailyTimeIntervalSchedule()
+        .onDaysOfTheWeek(DateBuilder.TUESDAY,
+          DateBuilder.WEDNESDAY,
+          DateBuilder.FRIDAY,
+          DateBuilder.SUNDAY)
+        .startingDailyAt(TimeOfDay
+          .hourAndMinuteOfDay(
+            18,
+            0))
+        // .withInterval(3,
+        // DateBuilder.IntervalUnit.HOUR)
+        .withRepeatCount(0))
+      .forJob(job)
+      .build();
 
-        Mat circles = new Mat();
-        Imgproc.HoughCircles(first, circles, Imgproc.HOUGH_GRADIENT, 1.0,
-          (double) first.rows() / 16, // change this value to detect circles with different distances to each other
-          100.0, 30.0, 20, 40); // change the last two parameters
-        Mat mask = Mat.zeros(first.rows(), first.cols(), CvType.CV_8U);
-        double mx = 0;
-        int mr = 0;
-        for (int x = 0; x < circles.cols(); x++) {
-          double[] c = circles.get(0, x);
-          mx = Math.max(mx, Math.round(c[1]));
-          mr = Math.max(mr, (int) Math.round(c[2]));
-          Point center = new Point(Math.round(c[0]), Math.round(c[1]));
-          int radius = (int) Math.round(c[2]);
-          Imgproc.circle(first, center, radius + 2, new Scalar(255, 0, 255), -1, 8, 0);
+    Trigger trigger21 = TriggerBuilder
+      .newTrigger()
+      .startNow()
+      .withIdentity("battle21")
+      .withSchedule(DailyTimeIntervalScheduleBuilder
+        .dailyTimeIntervalSchedule()
+        .onDaysOfTheWeek(DateBuilder.TUESDAY,
+          DateBuilder.WEDNESDAY,
+          DateBuilder.FRIDAY,
+          DateBuilder.SUNDAY)
+        .startingDailyAt(TimeOfDay
+          .hourAndMinuteOfDay(
+            21,
+            0))
+        // .withInterval(3,
+        // DateBuilder.IntervalUnit.HOUR)
+        .withRepeatCount(0))
+      .forJob(job)
+      .build();
+
+    Trigger endTrigger = TriggerBuilder
+      .newTrigger()
+      .startNow()
+      .withIdentity("endBattle")
+      .withSchedule(DailyTimeIntervalScheduleBuilder
+        .dailyTimeIntervalSchedule()
+        .onDaysOfTheWeek(DateBuilder.TUESDAY,
+          DateBuilder.WEDNESDAY,
+          DateBuilder.FRIDAY,
+          DateBuilder.SUNDAY)
+        .startingDailyAt(TimeOfDay
+          .hourAndMinuteOfDay(
+            21,
+            55))
+        .withRepeatCount(0))
+      .forJob(endBattle)
+      .build();
+
+    scheduler.scheduleJob(job, Set.of(trigger12, trigger15, trigger18, trigger21), true);
+    scheduler.scheduleJob(endBattle, endTrigger);
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    Set<Trigger> birthdays = birthdayConfig.getBirthdays().stream()
+      .map(bdth -> {
+        try {
+          Date date = dateFormat.parse(bdth.getDate());
+          date.setHours(8);
+          date.setMinutes(0);
+          return TriggerBuilder
+            .newTrigger()
+            .usingJobData("name", bdth.getName())
+            .withIdentity("birthday")
+            .startAt(date)
+            .forJob(birthday)
+            .build();
+        } catch (ParseException e) {
+          log.error(e.getMessage(), e);
+          return null;
         }
-        Imgproc.rectangle(mask, new Point(0, 0), new Point(mask.cols(), mx + mr + 2), new Scalar(255, 255, 255), -1);
-        Imgproc.rectangle(first, new Point(0, 0), new Point(first.cols(), mx + mr + 2), new Scalar(255, 255, 255), -1);
-        Core.bitwise_not(mask, mask);
+      })
+      .filter(trg -> trg != null)
+      .collect(Collectors.toSet());
 
-        Mat result = new Mat();
-        res.copyTo(result, mask);
-        Mat r_i = res.clone();
-
-        Imgproc.threshold(result, result, 140, 255, Imgproc.THRESH_BINARY /*+ Imgproc.THRESH_OTSU*/);
-        Mat hh = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 3));
-        Imgproc.dilate(result, result, hh);
-
-        Mat hierarchy2 = new Mat();
-        List<MatOfPoint> list2 = new ArrayList<>();
-        Imgproc.findContours(result, list2, hierarchy2, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
-
-        list2.stream()
-          .map(matOfPoint -> Imgproc.boundingRect(matOfPoint))
-          .filter(rect -> rect.width > rect.height * 2 && rect.height > 10)
-          .map(rect -> new Rect(rect.x - 1, rect.y - 1, rect.width + 1, rect.height + 3))
-          .forEach(rect -> {
-            Imgproc.rectangle(r_i, rect, new Scalar(0, 255, 0), 1);
-            Mat m = r_i.submat(rect);
-            Imgproc.dilate(m, m, Mat.ones(1, 1, CvType.CV_8U));
-            Core.bitwise_not(m, m);
-            BufferedImage bimg = null;
-            try {
-              bimg = mat2BufferedImage(m);
-            } catch (Exception e) {
-              e.printStackTrace();
-            }
-            String s = null;
-            try {
-              s = tesseract.doOCR(bimg);
-            } catch (TesseractException e) {
-              e.printStackTrace();
-            }
-            System.out.println(s);
-            strings.add(s.trim());
-          });
-      });
-    PlayerLayout playerLayout = new PlayerLayout();
-    playerLayout.setB2(new BattleLayout(strings.get(13), strings.get(12), strings.get(15), strings.get(14)));
-    playerLayout.setB3(new BattleLayout(strings.get(9), strings.get(8), strings.get(11), strings.get(10)));
-    playerLayout.setB5(new BattleLayout(strings.get(5), strings.get(4), strings.get(7), strings.get(6)));
-    playerLayout.setB7(new BattleLayout(strings.get(1), strings.get(0), strings.get(3), strings.get(2)));
-
-//    ParseResult parseResult = new ParseResult();
-//    parseResult.setRec7(new String[]{strings.get(0), strings.get(1), strings.get(2), strings.get(3)});
-//    parseResult.setRec5(new String[]{strings.get(4), strings.get(5), strings.get(6), strings.get(7)});
-//    parseResult.setRec3(new String[]{strings.get(8), strings.get(9), strings.get(10), strings.get(11)});
-//    parseResult.setRec2(new String[]{strings.get(12), strings.get(13), strings.get(14), strings.get(15)});
-
-    return playerLayout;
-
+    scheduler.scheduleJob(birthday, birthdays, true);
   }
 
-  static BufferedImage mat2BufferedImage(Mat matrix) throws Exception {
-    MatOfByte mob = new MatOfByte();
-    Imgcodecs.imencode(".png", matrix, mob);
-    return ImageIO.read(new ByteArrayInputStream(mob.toArray()));
+  @SneakyThrows
+  public void scheduleDeleteMessage(Integer messageId) {
+    JobDetail job = JobBuilder.newJob(DeleteMessageJob.class).withIdentity("deleteNotify" + messageId).build();
+    job.getJobDataMap().put("msgId", messageId);
+    job.getJobDataMap().put("bot", this);
+    Trigger deleteTrigger = TriggerBuilder
+      .newTrigger()
+      .startAt(futureDate(1, DateBuilder.IntervalUnit.HOUR))
+      // .startNow()
+      .withIdentity("deleteNotify" + messageId)
+      .forJob(job)
+      // .withSchedule(SimpleScheduleBuilder.repeatMinutelyForTotalCount(0))
+      .build();
+    scheduler.scheduleJob(job, deleteTrigger);
   }
 
   public static <T> Stream<Stream<T>> getTuples(Collection<T> items, int size) {
@@ -173,89 +242,94 @@ public class RecognitionTestBot extends TelegramLongPollingBot {
 
   @Override
   public String getBotUsername() {
-    return "pangos_bot";
+    return botName;
   }
 
   @Override
   public String getBotToken() {
-    return "1059091004:AAHsbBr9bHhziXHap_5VI4Djbo9UEi_3hi8";
+    return botToken;
   }
+  // -417220779
 
   @Override
   public void onUpdateReceived(Update update) {
-    if (update.hasMessage() && update.getMessage().hasPhoto()) {
-      PhotoSize photo = update.getMessage().getPhoto().stream().max(Comparator.comparing(PhotoSize::getFileSize)).get();
-      String url = null;
-      if (photo.getFilePath() != null) { // If the file_path is already present, we are done!
-        url = photo.getFilePath();
-      } else { // If not, let find it
-        // We create a GetFile method and set the file_id from the photo
-        GetFile getFileMethod = new GetFile();
-        getFileMethod.setFileId(photo.getFileId());
+    log.debug(update.toString());
+    if (update.hasMessage() && !update.getMessage().isGroupMessage()) {
+      if (update.getMessage().hasPhoto()) {
+        PhotoSize photo = update.getMessage().getPhoto().stream().max(Comparator.comparing(PhotoSize::getFileSize))
+          .get();
+        String url = null;
+        if (photo.getFilePath() != null) { // If the file_path is already present, we are done!
+          url = photo.getFilePath();
+        } else { // If not, let find it
+          // We create a GetFile method and set the file_id from the photo
+          GetFile getFileMethod = new GetFile();
+          getFileMethod.setFileId(photo.getFileId());
+          try {
+            // We execute the method using AbsSender::execute method.
+            org.telegram.telegrambots.meta.api.objects.File file = execute(getFileMethod);
+            // We now have the file_path
+            url = file.getFilePath();
+          } catch (TelegramApiException e) {
+            e.printStackTrace();
+          }
+        }
         try {
-          // We execute the method using AbsSender::execute method.
-          org.telegram.telegrambots.meta.api.objects.File file = execute(getFileMethod);
-          // We now have the file_path
-          url = file.getFilePath();
+          File file = this.downloadFile(url);
+          playerLayout = Recognition.recognize(file);
+          execute(SendMessage.builder()
+            .chatId(String.valueOf(update.getMessage().getChatId()))
+            .text(playerLayout.readable()).build());
+          InlineKeyboardMarkup.InlineKeyboardMarkupBuilder inlineKeyboardMarkupBuilder = InlineKeyboardMarkup.builder();
+          playerRepository
+            .getAllPlayers()
+            .window(3)
+            .doOnNext(playerFlux -> inlineKeyboardMarkupBuilder.keyboardRow(playerFlux
+              .map(player -> InlineKeyboardButton.builder()
+                .text(player.getName())
+                .callbackData(player.getId())
+                .build())
+              .collectList()
+              .block()));
+          execute(
+            SendMessage.builder()
+              .chatId(String.valueOf(update.getMessage().getChatId()))
+              .text("Чья расстановка?")
+              .replyMarkup(inlineKeyboardMarkupBuilder.build())
+              .build());
+
         } catch (TelegramApiException e) {
           e.printStackTrace();
         }
-      }
-      try {
-        File file = this.downloadFile(url);
-        playerLayout = recognize(file);
-        execute(SendMessage.builder()
-          .chatId(String.valueOf(update.getMessage().getChatId()))
-          .text(playerLayout.readable()).build());
-        InlineKeyboardMarkup.InlineKeyboardMarkupBuilder inlineKeyboardMarkupBuilder = InlineKeyboardMarkup.builder();
-        playerRepository
-          .getAllPlayers()
-          .window(3)
-          .doOnNext(playerFlux -> inlineKeyboardMarkupBuilder.keyboardRow(playerFlux.map(player -> InlineKeyboardButton.builder()
-              .text(player.getName())
-              .callbackData(player.getId())
-              .build())
-            .collectList()
-            .block()
-          ));
-        execute(
-          SendMessage.builder()
-            .chatId(String.valueOf(update.getMessage().getChatId()))
-            .text("Чья расстановка?")
-            .replyMarkup(inlineKeyboardMarkupBuilder.build())
+      } else if (update.hasCallbackQuery()) {
+        try {
+          execute(AnswerCallbackQuery.builder()
+            .callbackQueryId(update.getCallbackQuery().getId())
             .build());
-
-      } catch (TelegramApiException e) {
-        e.printStackTrace();
-      }
-    } else if (update.hasCallbackQuery()) {
-      try {
-        execute(AnswerCallbackQuery.builder()
-          .callbackQueryId(update.getCallbackQuery().getId())
-          .build());
-      } catch (TelegramApiException e) {
-        e.printStackTrace();
-      }
-      if (playerLayout != null) {
-        String id = update.getCallbackQuery().getData();
-        playerLayout.setPlayer(players.stream().filter(player -> player.getId().equals(id)).findAny().get());
-        battleRepository.addPlayerLayout(playerLayout);
-        playerLayout = null;
-        players = null;
-      }
-//      try {
-//        execute(SendMessage.builder().chatId(String.valueOf(update.getCallbackQuery().getChatId())).text("Добавлено").build());
-//      } catch (TelegramApiException e) {
-//        e.printStackTrace();
-//      }
-    } else {
-      try {
-        execute(SendMessage.builder()
-          .chatId(String.valueOf(update.getMessage().getChatId()))
-          .text("Изображение не найдено")
-          .build());
-      } catch (TelegramApiException e) {
-        e.printStackTrace();
+        } catch (TelegramApiException e) {
+          e.printStackTrace();
+        }
+        if (playerLayout != null) {
+          String id = update.getCallbackQuery().getData();
+          playerLayout.setPlayer(players.stream().filter(player -> player.getId().equals(id)).findAny().get());
+          battleRepository.addPlayerLayout(playerLayout);
+          playerLayout = null;
+          players = null;
+        }
+        // try {
+        // execute(SendMessage.builder().chatId(String.valueOf(update.getCallbackQuery().getChatId())).text("Добавлено").build());
+        // } catch (TelegramApiException e) {
+        // e.printStackTrace();
+        // }
+      } else {
+        try {
+          execute(SendMessage.builder()
+            .chatId(String.valueOf(update.getMessage().getChatId()))
+            .text("Изображение не найдено")
+            .build());
+        } catch (TelegramApiException e) {
+          e.printStackTrace();
+        }
       }
     }
   }

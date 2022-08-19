@@ -67,6 +67,7 @@ public class PlayerRepositoryDbImpl implements PlayerRepository {
       player.setId(String.valueOf(player.getName().hashCode()));
     }
     map.putIfAbsent(player.getId(), pl2str(player));
+    db.commit();
     return Mono.just(player);
   }
 
@@ -75,6 +76,7 @@ public class PlayerRepositoryDbImpl implements PlayerRepository {
     String str = pl2str(player);
     if (str != null) {
       map.put(id, str);
+      db.commit();
       return Mono.just(player);
     }
     return Mono.error(new IllegalArgumentException(""));
@@ -82,6 +84,8 @@ public class PlayerRepositoryDbImpl implements PlayerRepository {
 
   @Override
   public Mono<Boolean> deletePlayer(String id) {
-    return Mono.just(map.remove(id) != null);
+    Mono<Boolean> res = Mono.just(map.remove(id) != null);
+    db.commit();
+    return res;
   }
 }

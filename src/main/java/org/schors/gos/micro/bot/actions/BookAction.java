@@ -21,11 +21,6 @@ public class BookAction extends BotAction {
 
   @Override
   public Mono<? extends BotApiObject> execute(Update update, TgSession tgSession) {
-    SendMessage sendMessage = SendMessage.builder()
-      .chatId(String.valueOf(update.getMessage().getChatId()))
-      .text("Hello")
-      .build();
-
-    return sender.send(sendMessage);
+    return reply("Hello", update);
   }
 }

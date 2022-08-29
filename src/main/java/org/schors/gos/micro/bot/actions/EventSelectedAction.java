@@ -31,6 +31,6 @@ public class EventSelectedAction extends BotAction {
     EventRecord eventRecord = new EventRecord(new Date().toString(), value);
     return repository.createRecord(event, eventRecord)
       .log()
-      .flatMap(er -> Mono.empty());
+      .flatMap((arg0) -> replyCallback("Добавил", update));
   }
 }

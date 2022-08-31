@@ -63,8 +63,7 @@ public class Bot {
         TgSession session = sessionManager.getSession(update);
         actions.stream()
           .filter(botAction -> botAction.match(update, session))
-          .sorted((o1, o2) -> o1.order() > o2.order() ? 1 : -1)
-          .findFirst()
+          .min((o1, o2) -> o1.order() > o2.order() ? 1 : -1)
           .orElse(defaultAction)
           .execute(update, session)
           .log()

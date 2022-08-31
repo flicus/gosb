@@ -1,20 +1,25 @@
 package org.schors.gos.micro.model;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Introspected
 public class Data {
-  private List<Event> events;
-  private Map<String, EventRecord> eventRecords;
+  private final List<Event> events = new ArrayList<>();
+  private final Map<String, List<EventRecord>> eventRecords = new HashMap<>();
 
+  @NonNull
   public List<Event> getEvents() {
     return events;
   }
 
-  public Map<String, EventRecord> getEventRecords() {
+  @NonNull
+  public Map<String, List<EventRecord>> getEventRecords() {
     return eventRecords;
   }
 }

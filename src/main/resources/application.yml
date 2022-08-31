@@ -8,7 +8,8 @@ gosb:
     token: "219739200:AAHXCuDWJPoRhUAjFBXFmljVJhR2uVXdmwc"
     groupId: "-1001075972160"
   #    groupId: "-417220779"
-  data: db
+  data: ms
+  #  data: db
   #  data: redis
   battle:
     messages:
@@ -36,6 +37,20 @@ gosb:
       date: "12/12/1980"
     - name: "Фурия"
       date: "19/08/1980"
+
+microstream:
+  rest:
+    enabled: true
+    path: ms
+  storage:
+    event:
+      root-class: 'org.schors.gos.micro.model.Data'
+      storage-directory: build/microstream$gosb
+      channel-count: 4
+      channel-directory-prefix: 'channel_'
+      data-file-prefix: 'channel_'
+      data-file-suffix: 'dat'
+
 micronaut:
   server:
     port: 9090

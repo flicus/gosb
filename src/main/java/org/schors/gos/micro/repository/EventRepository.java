@@ -1,16 +1,19 @@
 package org.schors.gos.micro.repository;
 
+import org.schors.gos.micro.model.Event;
 import org.schors.gos.micro.model.EventRecord;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface EventRepository {
 
-  Flux<String> getEvents();
+  Flux<Event> getEvents();
 
-  Mono<String> createEvent(String event);
+  Mono<Boolean> deleteAllEvents();
 
-  Flux<EventRecord> getRecords(String event);
+  Mono<Event> createEvent(Event event);
+
+  Flux<EventRecord> getRecords(String event, Integer count);
 
   Mono<EventRecord> createRecord(String event, EventRecord eventRecord);
 

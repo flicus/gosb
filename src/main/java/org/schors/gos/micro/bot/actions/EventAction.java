@@ -26,7 +26,7 @@ public class EventAction extends BotAction {
       && update.getMessage().hasText()
       && update.getMessage().getText().startsWith("/event");
   }
-  
+
   @Override
   public Mono<? extends BotApiObject> execute(Update update, TgSession tgSession) {
     String[] list = update.getMessage().getText().split(" ");
@@ -35,7 +35,7 @@ public class EventAction extends BotAction {
       tgSession.put("event_value", list[1]);
 
       List<InlineKeyboardButton> buttons = repository.getEvents()
-        .map(event -> InlineKeyboardButton.builder().text(event).callbackData(event).build())
+        .map(event -> InlineKeyboardButton.builder().text(event.getName()).callbackData(event.getId()).build())
         .collectList().block();
 
       sendMessage = SendMessage.builder()

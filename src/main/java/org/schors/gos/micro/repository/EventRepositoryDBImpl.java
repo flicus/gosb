@@ -8,12 +8,14 @@ import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.mapdb.DB;
 import org.mapdb.Serializer;
+import org.schors.gos.micro.model.Event;
 import org.schors.gos.micro.model.EventRecord;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
@@ -33,20 +35,26 @@ public class EventRepositoryDBImpl implements EventRepository {
 
 
   @Override
-  public Flux<String> getEvents() {
-    return Flux.fromIterable(events.keySet());
+  public Flux<Event> getEvents() {
+    return Flux.fromStream(events.keySet().stream().map(s -> new Event(s, s)));
   }
 
   @Override
-  public Mono<String> createEvent(String event) {
+  public Mono<Boolean> deleteAllEvents() {
+    return null;
+  }
+
+  @Override
+  public Mono<Event> createEvent(Event event) {
+    event.setId(UUID.randomUUID().toString());
     List<EventRecord> list = new ArrayList<>();
-    events.put(event, er2str(list));
+    events.put(event.getId(), er2str(list));
     db.commit();
     return Mono.just(event);
   }
 
   @Override
-  public Flux<EventRecord> getRecords(String event) {
+  public Flux<EventRecord> getRecords(String event, Integer count) {
     return Flux.fromIterable(str2er(events.get(event)));
   }
 

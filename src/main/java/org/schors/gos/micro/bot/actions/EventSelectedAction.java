@@ -27,10 +27,10 @@ public class EventSelectedAction extends BotAction {
   @Override
   public Mono<? extends BotApiObject> execute(Update update, TgSession tgSession) {
     String value = (String) tgSession.remove("event_value");
-    String event = update.getCallbackQuery().getData();
+    String id = update.getCallbackQuery().getData();
     EventRecord eventRecord = new EventRecord(new Date().toString(), value);
-    return repository.createRecord(event, eventRecord)
+    return repository.createRecord(id, eventRecord)
       .log()
-      .flatMap((arg0) -> replyCallback("Добавил", update));
+      .flatMap((record) -> replyCallback("Добавил", update));
   }
 }

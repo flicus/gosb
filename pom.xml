@@ -1,8 +1,7 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.schors.gos</groupId>
@@ -20,9 +19,10 @@
     <packaging>jar</packaging>
     <jdk.version>17</jdk.version>
     <release.version>17</release.version>
-    <micronaut.version>3.6.1</micronaut.version>
+    <micronaut.version>3.7.3</micronaut.version>
     <micronaut.runtime>netty</micronaut.runtime>
     <exec.mainClass>org.schors.gos.Application</exec.mainClass>
+    <gitCommitIdPlugin.version>4.0.5</gitCommitIdPlugin.version>
   </properties>
 
   <repositories>
@@ -114,11 +114,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.mapdb</groupId>
-      <artifactId>mapdb</artifactId>
-      <version>3.0.8</version>
-    </dependency>
-    <dependency>
       <groupId>org.telegram</groupId>
       <artifactId>telegrambots-meta</artifactId>
       <version>6.1.0</version>
@@ -127,6 +122,11 @@
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>31.1-jre</version>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-management</artifactId>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
@@ -152,7 +152,7 @@
         <!--        <version>1.4.1</version>-->
         <configuration>
           <rules>
-            <dependencyConvergence/>
+            <dependencyConvergence />
           </rules>
         </configuration>
       </plugin>
@@ -202,25 +202,24 @@
           </compilerArgs>
         </configuration>
       </plugin>
+
       <plugin>
-        <groupId>org.graalvm.nativeimage</groupId>
-        <artifactId>native-image-maven-plugin</artifactId>
-        <version>21.2.0</version>
+        <groupId>pl.project13.maven</groupId>
+        <artifactId>git-commit-id-plugin</artifactId>
+        <version>${gitCommitIdPlugin.version}</version>
         <executions>
           <execution>
+            <id>get-the-git-infos</id>
             <goals>
-              <goal>native-image</goal>
+              <goal>revision</goal>
             </goals>
-            <phase>package</phase>
+            <phase>compile</phase>
           </execution>
         </executions>
         <configuration>
-          <!--<mainClass>com.acme.Main</mainClass>-->
-          <!--<imageName>${project.name}</imageName>-->
-          <!--<buildArgs></buildArgs>-->
+          <generateGitPropertiesFile>true</generateGitPropertiesFile>
         </configuration>
       </plugin>
     </plugins>
   </build>
-
 </project>

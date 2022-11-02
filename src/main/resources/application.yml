@@ -63,5 +63,10 @@ logger:
     org.schors: TRACE
     org.telegram: TRACE
 
+endpoints:
+  info:
+    enabled: true
+    sensitive: false
+
 
 

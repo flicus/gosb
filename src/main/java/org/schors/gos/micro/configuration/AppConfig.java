@@ -6,8 +6,6 @@ import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Singleton;
 import lombok.SneakyThrows;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
 import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
 
@@ -28,17 +26,6 @@ public class AppConfig {
     Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
     scheduler.start();
     return scheduler;
-  }
-
-
-  @Singleton
-  public DB getDB() {
-    DB db = DBMaker
-      .fileDB("gosb.db")
-      .closeOnJvmShutdown()
-      .transactionEnable()
-      .make();
-    return db;
   }
 }
 

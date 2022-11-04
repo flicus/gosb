@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.schors.gos.micro.BattleConfig;
 import org.schors.gos.micro.BirthdayConfig;
+import org.schors.gos.micro.bot.actions.UnknownAction;
 import org.schors.gos.micro.notifier.SendBirthdayJob;
 import org.schors.gos.micro.notifier.SendMessageJob;
 import org.schors.gos.micro.tg.TgReceiver;
@@ -46,11 +47,11 @@ public class Bot {
   private BattleConfig battleConfig;
   @Inject
   private BirthdayConfig birthdayConfig;
-
-  private BotAction defaultAction;
+  @Inject
+  private UnknownAction defaultAction;
 
   @Value("${gosb.bot.groupId}")
-  private String chatId;
+  private Long chatId;
 
   @SneakyThrows
   @EventListener

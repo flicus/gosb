@@ -18,7 +18,7 @@ public abstract class BotAction implements ActionMatcher<Update, TgSession, Bool
   protected TgSender sender;
 
   public int order() {
-    return 0;
+    return 50;
   }
 
   public Mono<Message> replyCallback(Update update) {

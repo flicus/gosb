@@ -18,6 +18,8 @@ public class UnknownAction extends BotAction {
 
   @Override
   public Mono<? extends BotApiObject> execute(Update update, TgSession tgSession) {
-    return reply("Unknown command", update);
+    return update.hasMessage() && update.getMessage().getChat().isUserChat()
+    ? reply("Unknown command", update)
+    : Mono.empty();
   }
 }

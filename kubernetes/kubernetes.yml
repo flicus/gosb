@@ -1,10 +1,67 @@
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gosb-config
+data:
+  application.yaml: |-
+    gosb:
+      bot:
+        new: true
+        enabled: true
+        name: "evlampia_bot"
+        token: "219739200:AAHXCuDWJPoRhUAjFBXFmljVJhR2uVXdmwc"
+        groupId: "-1001075972160"
+      data: ms
+      battle:
+        messages:
+          - Битва! Ура, бежим бить!
+          - Канальи! Там тысяча чертей!
+          - Воруй, полоскай, мафии по жопе дай!
+          - А ты! Уже пнул мафию?
+          - Мафия сама себя не отпердолит!
+          - Очень чешется копыто. А у тебя?
+          - Чье кунфу сильнее? Узнай на ТНТ!
+          - Лень конечно, но пора на войну!
+          - Битва!
+          - Соблаговолите пройти в битву!
+          - И вновь продолжается бой, и сердцу тревожно в груди...
+          - Обед обедом, а война по расписанию!
+          - С прискорбием сообщаю что пора в битву
+          - Да, это снова я, да - опять пора стрелять!
+          - Ля ля ля, жу жу жу, иду бить, не торможу
+          - Я из лесу вышел, был сильный понос, и кинул я памперс Грозе прямо в нос!
+          - Сижу на берегу реки, смотрю на трупы врагов
+        ends:
+          - Сливаем допы!
+      birthdays:
+        - name: "Афина"
+          date: "12/12/1980"
+        - name: "Фурия"
+          date: "19/08/1980"
+    logger:
+      levels:
+        io.micronaut: DEBUG
+        io.micronaut.context: INFO
+        org.schors: TRACE
+        org.telegram: TRACE
+    microstream:
+      storage:
+        event:
+          storage-directory: /var/data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gosb-storage
+spec:
+  storageClassName: kube-storage
+  accessModes: [ReadWriteOnce]
+  resources: { requests: { storage: 1Gi } }
+---
+apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    app.quarkus.io/commit-id: dd4336db84a17e0db6d5652ff891e13de7386b2e
-    app.quarkus.io/build-timestamp: 2022-11-01 - 15:28:23 +0000
   labels:
     app.kubernetes.io/name: gosb
     app.kubernetes.io/version: "0.1"
@@ -22,9 +79,6 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    app.quarkus.io/commit-id: dd4336db84a17e0db6d5652ff891e13de7386b2e
-    app.quarkus.io/build-timestamp: 2022-11-01 - 15:28:23 +0000
   labels:
     app.kubernetes.io/name: gosb
     app.kubernetes.io/version: "0.1"
@@ -37,13 +91,14 @@ spec:
       app.kubernetes.io/version: "0.1"
   template:
     metadata:
-      annotations:
-        app.quarkus.io/commit-id: dd4336db84a17e0db6d5652ff891e13de7386b2e
-        app.quarkus.io/build-timestamp: 2022-11-01 - 15:28:23 +0000
       labels:
         app.kubernetes.io/name: gosb
         app.kubernetes.io/version: "0.1"
     spec:
+      volumes:
+        - name: s1
+          persistentVolumeClaim:
+            claimName: gosb-storage
       containers:
         - env:
             - name: KUBERNETES_NAMESPACE
@@ -57,3 +112,6 @@ spec:
             - containerPort: 8080
               name: http
               protocol: TCP
+          volumeMounts:
+            - name: s1
+              mountPath: /var/data

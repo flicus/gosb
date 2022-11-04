@@ -70,7 +70,7 @@ spec:
   ports:
     - name: http
       port: 9090
-      nodePort: 19090
+      nodePort: 39090
   selector:
     app.kubernetes.io/name: gosb
     app.kubernetes.io/version: "0.1"

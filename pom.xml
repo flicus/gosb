@@ -207,7 +207,15 @@
           </compilerArgs>
         </configuration>
       </plugin>
-
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <configuration>
+          <to>
+            <image>localhost:32000/gosb:${project.version}</image>
+          </to>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>pl.project13.maven</groupId>
         <artifactId>git-commit-id-plugin</artifactId>

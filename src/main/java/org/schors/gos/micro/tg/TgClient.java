@@ -1,9 +1,12 @@
 package org.schors.gos.micro.tg;
 
-import io.micronaut.core.async.annotation.SingleResult;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Post;
+import io.micronaut.context.annotation.Value;
+import io.micronaut.core.type.Argument;
+import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updates.GetUpdates;
 import org.telegram.telegrambots.meta.api.objects.ApiResponse;
@@ -13,14 +16,26 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 
-@Client("telegram")
-public interface TgClient {
+import static io.micronaut.http.HttpRequest.POST;
 
-  @SingleResult
-  @Post("getupdates")
-  Mono<ApiResponse<ArrayList<Update>>> getUpdates(@Body GetUpdates getUpdates);
+@Singleton
+public class TgClient {
 
-  @SingleResult
-  @Post("sendmessage")
-  Mono<ApiResponse<Message>> sendMessage(@Body BotApiMethod sendMessage);
+  @Client("telegram")
+  @Inject
+  HttpClient client;
+
+  @Value("${gosb.bot.token}")
+  String token;
+
+  Mono<ApiResponse<ArrayList<Update>>> getUpdates(GetUpdates getUpdates) {
+    return Mono.from(client
+    .retrieve(POST(token + "/getupdates", getUpdates), Argument.of(ApiResponse.class)));
+  }
+
+
+  Mono<ApiResponse<Message>> sendMessage(BotApiMethod sendMessage) {
+    return Mono.from(client
+    .retrieve(POST(token + "/sendmessage", sendMessage), Argument.of(ApiResponse.class)));
+  }
 }

@@ -27,6 +27,8 @@ spec:
             name: gosb-config
       containers:
         - env:
+            # - name: BOOTSTRAP_CONTEXT_PROPERTY
+              # value: enabled
             - name: KUBERNETES_NAMESPACE
               valueFrom:
                 fieldRef:

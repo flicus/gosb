@@ -58,7 +58,7 @@ micronaut:
     services:
       telegram:
         urls:
-          - https://api.telegram.org/bot${gosb.bot.token}/
+          - https://api.telegram.org/bot$
         read-timeout: 75s
         connect-timeout: 75s
         logger-name: telegram

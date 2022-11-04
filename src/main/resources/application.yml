@@ -83,5 +83,9 @@ endpoints:
     enabled: true
     sensitive: false
 
-
+kubernetes:
+  client:
+    config-maps:
+      paths:
+        - /etc/configuration
 

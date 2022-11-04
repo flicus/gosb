@@ -6,6 +6,7 @@ import org.schors.gos.micro.repository.PersonRepository;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
@@ -23,7 +24,7 @@ public class PersonController {
         return repository.getAllPersons();
     }
 
-    @Get
+    @Post
     public Mono<Person> createPerson(@Body Person person) {
         return repository.createPerson(person);
     }

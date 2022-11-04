@@ -50,8 +50,6 @@ microstream:
       data-file-suffix: 'dat'
 
 micronaut:
-  config-client:
-    enabled: true
   server:
     port: 9090
   http:

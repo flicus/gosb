@@ -15,9 +15,9 @@ public class DeleteMessageJob implements Job {
   @Override
   public void execute(JobExecutionContext context) throws JobExecutionException {
     Integer msgId = (Integer) context.getJobDetail().getJobDataMap().get("msgId");
-    String chatId = context.getJobDetail().getJobDataMap().getString("chatId");
+    Long chatId = context.getJobDetail().getJobDataMap().getLong("chatId");
     TgSender sender = (TgSender) context.getJobDetail().getJobDataMap().get("sender");
-    ;
+
     log.debug("delete: " + msgId);
     sender
       .send(DeleteMessage.builder().chatId(chatId).messageId(msgId).build())

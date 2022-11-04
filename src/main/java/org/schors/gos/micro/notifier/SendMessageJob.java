@@ -20,7 +20,7 @@ public class SendMessageJob implements Job {
   @Override
   public void execute(JobExecutionContext context) throws JobExecutionException {
     List<String> messages = (List<String>) context.getJobDetail().getJobDataMap().get("msg");
-    String chatId = context.getJobDetail().getJobDataMap().getString("chatId");
+    Long chatId = context.getJobDetail().getJobDataMap().getLong("chatId");
     TgSender sender = (TgSender) context.getJobDetail().getJobDataMap().get("sender");
     Scheduler scheduler = (Scheduler) context.getJobDetail().getJobDataMap().get("executor");
 

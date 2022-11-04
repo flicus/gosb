@@ -15,7 +15,7 @@ public class SendBirthdayJob implements Job {
   @Override
   public void execute(JobExecutionContext context) throws JobExecutionException {
     String name = context.getJobDetail().getJobDataMap().getString("name");
-    String chatId = context.getJobDetail().getJobDataMap().getString("chatId");
+    Long chatId = context.getJobDetail().getJobDataMap().getLong("chatId");
     TgSender sender = (TgSender) context.getJobDetail().getJobDataMap().get("sender");
     log.debug("trigger: " + context.getTrigger().getKey().getName());
 

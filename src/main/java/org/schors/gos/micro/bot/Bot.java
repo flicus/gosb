@@ -60,16 +60,16 @@ public class Bot {
     startScheduledTasks();
 
     receiver
-      .subscribe(update -> {
-        TgSession session = sessionManager.getSession(update);
-        actions.stream()
-          .filter(botAction -> botAction.match(update, session))
-          .min((o1, o2) -> o1.order() > o2.order() ? 1 : -1)
-          .orElse(defaultAction)
-          .execute(update, session)
-          .log()
-          .subscribe();
-      });
+        .subscribe(update -> {
+          TgSession session = sessionManager.getSession(update);
+          actions.stream()
+              .filter(botAction -> botAction.match(update, session))
+              .min((o1, o2) -> o1.order() > o2.order() ? 1 : -1)
+              .orElse(defaultAction)
+              .execute(update, session)
+              .log()
+              .subscribe();
+        });
   }
 
   private void startScheduledTasks() throws SchedulerException {
@@ -92,105 +92,95 @@ public class Bot {
     birthday.getJobDataMap().put("executor", scheduler);
 
     Trigger trigger12 = TriggerBuilder
-      .newTrigger()
-      .startNow()
-      .withIdentity("battle12")
-      .withSchedule(DailyTimeIntervalScheduleBuilder
-        .dailyTimeIntervalSchedule()
-        .onDaysOfTheWeek(DateBuilder.TUESDAY,
-          DateBuilder.WEDNESDAY,
-          DateBuilder.FRIDAY,
-          DateBuilder.SUNDAY)
-        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(12, 0))
-        .withRepeatCount(0))
-      .forJob(job)
-      .build();
+        .newTrigger()
+        .startNow()
+        .withIdentity("battle12")
+        .withSchedule(DailyTimeIntervalScheduleBuilder
+            .dailyTimeIntervalSchedule()
+            .onDaysOfTheWeek(DateBuilder.TUESDAY,
+                DateBuilder.WEDNESDAY,
+                DateBuilder.FRIDAY,
+                DateBuilder.SUNDAY)
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(12, 0))
+            .withRepeatCount(0))
+        .forJob(job)
+        .build();
 
     Trigger trigger15 = TriggerBuilder
-      .newTrigger()
-      .startNow()
-      .withIdentity("battle15")
-      .withSchedule(DailyTimeIntervalScheduleBuilder
-        .dailyTimeIntervalSchedule()
-        .onDaysOfTheWeek(DateBuilder.TUESDAY,
-          DateBuilder.WEDNESDAY,
-          DateBuilder.FRIDAY,
-          DateBuilder.SUNDAY)
-        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(15, 0))
-        .withRepeatCount(0))
-      .forJob(job)
-      .build();
+        .newTrigger()
+        .startNow()
+        .withIdentity("battle15")
+        .withSchedule(DailyTimeIntervalScheduleBuilder
+            .dailyTimeIntervalSchedule()
+            .onDaysOfTheWeek(DateBuilder.TUESDAY,
+                DateBuilder.WEDNESDAY,
+                DateBuilder.FRIDAY,
+                DateBuilder.SUNDAY)
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(15, 0))
+            .withRepeatCount(0))
+        .forJob(job)
+        .build();
 
     Trigger trigger18 = TriggerBuilder
-      .newTrigger()
-      .startNow()
-      .withIdentity("battle18")
-      .withSchedule(DailyTimeIntervalScheduleBuilder
-        .dailyTimeIntervalSchedule()
-        .onDaysOfTheWeek(DateBuilder.TUESDAY,
-          DateBuilder.WEDNESDAY,
-          DateBuilder.FRIDAY,
-          DateBuilder.SUNDAY)
-        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(18, 0))
-        .withRepeatCount(0))
-      .forJob(job)
-      .build();
+        .newTrigger()
+        .startNow()
+        .withIdentity("battle18")
+        .withSchedule(DailyTimeIntervalScheduleBuilder
+            .dailyTimeIntervalSchedule()
+            .onDaysOfTheWeek(DateBuilder.TUESDAY,
+                DateBuilder.WEDNESDAY,
+                DateBuilder.FRIDAY,
+                DateBuilder.SUNDAY)
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(18, 0))
+            .withRepeatCount(0))
+        .forJob(job)
+        .build();
 
     Trigger trigger21 = TriggerBuilder
-      .newTrigger()
-      .startNow()
-      .withIdentity("battle21")
-      .withSchedule(DailyTimeIntervalScheduleBuilder
-        .dailyTimeIntervalSchedule()
-        .onDaysOfTheWeek(DateBuilder.TUESDAY,
-          DateBuilder.WEDNESDAY,
-          DateBuilder.FRIDAY,
-          DateBuilder.SUNDAY)
-        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(21, 0))
-        .withRepeatCount(0))
-      .forJob(job)
-      .build();
+        .newTrigger()
+        .startNow()
+        .withIdentity("battle21")
+        .withSchedule(DailyTimeIntervalScheduleBuilder
+            .dailyTimeIntervalSchedule()
+            .onDaysOfTheWeek(DateBuilder.TUESDAY,
+                DateBuilder.WEDNESDAY,
+                DateBuilder.FRIDAY,
+                DateBuilder.SUNDAY)
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(21, 0))
+            .withRepeatCount(0))
+        .forJob(job)
+        .build();
 
     Trigger endTrigger = TriggerBuilder
-      .newTrigger()
-      .startNow()
-      .withIdentity("endBattle")
-      .withSchedule(DailyTimeIntervalScheduleBuilder
-        .dailyTimeIntervalSchedule()
-        .onDaysOfTheWeek(DateBuilder.TUESDAY,
-          DateBuilder.WEDNESDAY,
-          DateBuilder.FRIDAY,
-          DateBuilder.SUNDAY)
-        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(21, 55))
-        .withRepeatCount(0))
-      .forJob(endBattle)
-      .build();
+        .newTrigger()
+        .startNow()
+        .withIdentity("endBattle")
+        .withSchedule(DailyTimeIntervalScheduleBuilder
+            .dailyTimeIntervalSchedule()
+            .onDaysOfTheWeek(DateBuilder.TUESDAY,
+                DateBuilder.WEDNESDAY,
+                DateBuilder.FRIDAY,
+                DateBuilder.SUNDAY)
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(21, 55))
+            .withRepeatCount(0))
+        .forJob(endBattle)
+        .build();
 
     scheduler.scheduleJob(job, Set.of(trigger12, trigger15, trigger18, trigger21), true);
     scheduler.scheduleJob(endBattle, endTrigger);
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    Set<Trigger> birthdays = birthdayConfig.getBirthdays().stream()
-      .map(bdth -> {
-        try {
-          Date date = dateFormat.parse(bdth.getDate());
-          date.setHours(8);
-          date.setMinutes(0);
-          return TriggerBuilder
-            .newTrigger()
-            .usingJobData("name", bdth.getName())
-            .withIdentity("birthday")
-            .startAt(date)
-            .forJob(birthday)
-            .build();
-        } catch (ParseException e) {
-          log.error(e.getMessage(), e);
-          return null;
-        }
-      })
-      .filter(Objects::nonNull)
-      .collect(Collectors.toSet());
+    Trigger bdTrigger = TriggerBuilder
+        .newTrigger()
+        .startNow()
+        .withIdentity("birthday")
+        .withSchedule(DailyTimeIntervalScheduleBuilder
+            .dailyTimeIntervalSchedule()
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(7, 0))
+            .withRepeatCount(0))
+        .forJob(birthday)
+        .build();
 
-    scheduler.scheduleJob(birthday, birthdays, true);
+    scheduler.scheduleJob(birthday, bdTrigger);
+
   }
 }

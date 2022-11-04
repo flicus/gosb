@@ -12,6 +12,7 @@ import java.util.Map;
 public class Data {
   private final List<Event> events = new ArrayList<>();
   private final Map<String, List<EventRecord>> eventRecords = new HashMap<>();
+  private final List<Person> persons = new ArrayList<>();
 
   @NonNull
   public List<Event> getEvents() {
@@ -22,4 +23,10 @@ public class Data {
   public Map<String, List<EventRecord>> getEventRecords() {
     return eventRecords;
   }
+
+  @NonNull
+  public List<Person> getPersons() {
+    return persons;
+  }
+
 }

@@ -9,8 +9,8 @@ data:
       bot:
         new: true
         enabled: true
-        name: "evlampia_bot"
-        token: "219739200:AAHXCuDWJPoRhUAjFBXFmljVJhR2uVXdmwc"
+        name: "replace_me"
+        token: "replace_me"
         groupId: "-1001075972160"
       data: ms
       battle:

@@ -42,6 +42,8 @@ public class SendMessageJob implements Job {
       .withIdentity("deleteNotify" + message.getMessageId())
       .build();
     job.getJobDataMap().put("msgId", message.getMessageId());
+    job.getJobDataMap().put("chatId", chatId);
+    job.getJobDataMap().put("sender", sender);
     Trigger deleteTrigger = TriggerBuilder
       .newTrigger()
       .startAt(futureDate(1, DateBuilder.IntervalUnit.HOUR))

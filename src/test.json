@@ -1,0 +1,71 @@
+{
+    "ok": true,
+    "result": [
+        {
+            "update_id": 573556628,
+            "message": {
+                "message_id": 2493,
+                "from": {
+                    "id": 145590494,
+                    "is_bot": false,
+                    "first_name": "Sergey",
+                    "username": "flicus",
+                    "language_code": "en"
+                },
+                "chat": {
+                    "id": 145590494,
+                    "first_name": "Sergey",
+                    "username": "flicus",
+                    "type": "private"
+                },
+                "date": 1667558633,
+                "text": "sdfsdfsdfsdf"
+            }
+        }
+    ]
+}
+
+{
+    "ok": true,
+    "result": [
+        {
+            "update_id": 573556626,
+            "message": {
+                "message_id": 994,
+                "from": {
+                    "id": 5157387918,
+                    "is_bot": false,
+                    "first_name": "Gena",
+                    "last_name": "Genna"
+                },
+                "chat": {
+                    "id": -1001528204057,
+                    "title": "\ud83c\uddf7\ud83c\uddfa \ud83c\uddfa\ud83c\udde6 \ud83c\uddea\ud83c\uddea \ud83c\uddf1\ud83c\uddfb \ud83c\uddf1\ud83c\uddf9 Info Finland \ud83c\uddeb\ud83c\uddee",
+                    "username": "finruschat",
+                    "type": "supergroup"
+                },
+                "date": 1667553332,
+                "new_chat_participant": {
+                    "id": 5157387918,
+                    "is_bot": false,
+                    "first_name": "Gena",
+                    "last_name": "Genna"
+                },
+                "new_chat_member": {
+                    "id": 5157387918,
+                    "is_bot": false,
+                    "first_name": "Gena",
+                    "last_name": "Genna"
+                },
+                "new_chat_members": [
+                    {
+                        "id": 5157387918,
+                        "is_bot": false,
+                        "first_name": "Gena",
+                        "last_name": "Genna"
+                    }
+                ]
+            }
+        }
+    ]
+}

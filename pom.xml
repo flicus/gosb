@@ -23,6 +23,8 @@
     <micronaut.runtime>netty</micronaut.runtime>
     <exec.mainClass>org.schors.gos.Application</exec.mainClass>
     <gitCommitIdPlugin.version>4.0.5</gitCommitIdPlugin.version>
+    <angular.project.location>src/main/web</angular.project.location>
+    <angular.project.nodeinstallation>node</angular.project.nodeinstallation>
   </properties>
 
   <repositories>
@@ -136,7 +138,7 @@
     <dependency>
       <groupId>io.micronaut.kubernetes</groupId>
       <artifactId>micronaut-kubernetes-discovery-client</artifactId>
-  </dependency>
+    </dependency>
   </dependencies>
 
   <!--  <dependencyManagement>-->
@@ -157,22 +159,10 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <!--        <version>1.4.1</version>-->
-        <configuration>
-          <rules>
-            <dependencyConvergence />
-          </rules>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <!-- Uncomment to enable incremental compilation -->
           <!-- <useIncrementalCompilation>false</useIncrementalCompilation> -->
-
           <annotationProcessorPaths combine.self="override">
             <path>
               <groupId>org.projectlombok</groupId>
@@ -237,6 +227,75 @@
           <generateGitPropertiesFile>true</generateGitPropertiesFile>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <!-- <version>1.6</version> -->
+        <configuration>
+          <workingDirectory>${project.basedir}</workingDirectory>
+          <installDirectory>${angular.project.nodeinstallation}</installDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <configuration>
+              <nodeVersion>v18.12.1</nodeVersion>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <!-- Optional configuration which provides for running any npm command -->
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>npm build</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run build</arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <!-- <version>2.4.2</version> -->
+        <executions>
+            <execution>
+                <id>default-copy-resources</id>
+                <phase>process-resources</phase>
+                <goals>
+                    <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                    <overwrite>true</overwrite>
+                    <!-- This folder is the folder where your angular files 
+                    will be copied to. It must match the resulting war-file name.
+                    So if you have customized the name of war-file for ex. as "app.war"
+                    then below value should be ${project.build.directory}/app/ 
+                    Value given below is as per default war-file name -->
+                    <outputDirectory>${project.build.directory}/classes/</outputDirectory>
+                    <resources>
+                        <resource>
+                            <directory>${project.basedir}/dist/</directory>
+                        </resource>
+                    </resources>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
     </plugins>
   </build>
 </project>

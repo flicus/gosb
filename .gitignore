@@ -35,6 +35,8 @@ target
 
 # dependencies
 /node_modules
+/node
+/.angular
 
 # profiling files
 chrome-profiler-events*.json

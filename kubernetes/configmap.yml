@@ -41,7 +41,7 @@ data:
           date: "19/08/1980"
     logger:
       levels:
-        io.micronaut: DEBUG
+        io.micronaut: INFO
         io.micronaut.context: INFO
         org.schors: TRACE
         org.telegram: TRACE

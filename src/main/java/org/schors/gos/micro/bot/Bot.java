@@ -14,6 +14,7 @@ import org.schors.gos.micro.BirthdayConfig;
 import org.schors.gos.micro.bot.actions.UnknownAction;
 import org.schors.gos.micro.notifier.SendBirthdayJob;
 import org.schors.gos.micro.notifier.SendMessageJob;
+import org.schors.gos.micro.repository.PersonRepository;
 import org.schors.gos.micro.tg.TgReceiver;
 import org.schors.gos.micro.tg.TgSender;
 import org.schors.gos.micro.tg.TgSession;
@@ -49,6 +50,8 @@ public class Bot {
   private BirthdayConfig birthdayConfig;
   @Inject
   private UnknownAction defaultAction;
+  @Inject
+  private PersonRepository personRepository;
 
   @Value("${gosb.bot.groupId}")
   private Long chatId;
@@ -90,6 +93,7 @@ public class Bot {
     birthday.getJobDataMap().put("chatId", chatId);
     birthday.getJobDataMap().put("sender", sender);
     birthday.getJobDataMap().put("executor", scheduler);
+    birthday.getJobDataMap().put("persons", personRepository);
 
     Trigger trigger12 = TriggerBuilder
         .newTrigger()

@@ -16,18 +16,16 @@ import org.schors.gos.micro.tg.TgSender;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 @Slf4j
-@AllArgsConstructor
 public class SendBirthdayJob implements Job {
 
   private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
-  private PersonRepository personRepository;
 
   @SneakyThrows
   @Override
   public void execute(JobExecutionContext context) throws JobExecutionException {
     Long chatId = context.getJobDetail().getJobDataMap().getLong("chatId");
     TgSender sender = (TgSender) context.getJobDetail().getJobDataMap().get("sender");
+    PersonRepository personRepository = (PersonRepository) context.getJobDetail().getJobDataMap().get("persons");
     log.debug("trigger: " + context.getTrigger().getKey().getName());
 
     personRepository.getAllPersons()

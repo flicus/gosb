@@ -19,6 +19,9 @@ spec:
         app.kubernetes.io/version: "0.1"
     spec:
       volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: gosb-logs
         - name: s1
           persistentVolumeClaim:
             claimName: gosb-storage
@@ -41,6 +44,9 @@ spec:
               name: http
               protocol: TCP
           volumeMounts:
+            - name: logs
+              mountPath: /var/log/gosb
+              readOnly: false
             - name: s1
               mountPath: /var/data
             - name: configuration

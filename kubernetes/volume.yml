@@ -7,3 +7,12 @@ spec:
   storageClassName: kube-storage
   accessModes: [ReadWriteOnce]
   resources: { requests: { storage: 1Gi } }
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gosb-logs
+spec:
+  storageClassName: kube-storage
+  accessModes: [ReadWriteOnce]
+  resources: { requests: { storage: 5Gi } }

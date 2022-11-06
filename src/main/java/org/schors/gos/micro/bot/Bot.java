@@ -94,6 +94,7 @@ public class Bot {
     birthday.getJobDataMap().put("sender", sender);
     birthday.getJobDataMap().put("executor", scheduler);
     birthday.getJobDataMap().put("persons", personRepository);
+    birthday.getJobDataMap().put("bdc", birthdayConfig);
 
     Trigger trigger12 = TriggerBuilder
         .newTrigger()

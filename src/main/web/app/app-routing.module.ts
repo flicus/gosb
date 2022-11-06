@@ -4,13 +4,15 @@ import {PlayersComponent} from "./players/players.component";
 import {WeekComponent} from "./week/week.component";
 import {PlayerDetailComponent} from "./player-detail/player-detail.component";
 import {TodayComponent} from "./today/today.component";
+import { PersonsComponent } from './persons/persons.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/today', pathMatch: 'full'},
   {path: 'detail/:id', component: PlayerDetailComponent},
   {path: 'today', component: TodayComponent},
   {path: 'week', component: WeekComponent},
-  {path: 'players', component: PlayersComponent}
+  {path: 'players', component: PlayersComponent},
+  {path: 'persons', component: PersonsComponent}
 ];
 
 @NgModule({

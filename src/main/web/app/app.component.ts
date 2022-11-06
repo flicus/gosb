@@ -15,7 +15,8 @@ export class AppComponent implements OnInit {
     this.items = [
       {label: 'Сегодня', icon: 'pi pi-fw pi-chart-bar', routerLink: ['/today']},
       {label: 'Неделя', icon: 'pi pi-fw pi-calendar', routerLink: ['/week']},
-      {label: 'Игроки', icon: 'pi pi-fw pi-users', routerLink: ['/players']}
+      {label: 'Игроки', icon: 'pi pi-fw pi-users', routerLink: ['/players']},
+      {label: 'Человеки', icon: 'pi pi-fw pi-users', routerLink: ['/persons']}
     ];
     this.activeItem = this.items[0];
   }

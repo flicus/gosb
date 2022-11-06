@@ -1,0 +1,31 @@
+:host ::ng-deep {
+    .p-dropdown {
+      width: 14rem;
+      font-weight: normal;
+    }
+  
+    .c-spacing {
+      margin-left: 1rem;
+    }
+  
+    .new-user {
+      width: 14rem;
+      font-weight: normal;
+    }
+  
+    .person-header {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+    }
+  
+    .person-name {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-left: 1rem;
+    }
+  
+  
+  }
+  

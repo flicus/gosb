@@ -23,6 +23,7 @@ import {TodayComponent} from './today/today.component';
 import {TagModule} from "primeng/tag";
 import {DragDropModule} from "primeng/dragdrop";
 import {ScrollTopModule} from "primeng/scrolltop";
+import { PersonsComponent } from './persons/persons.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import {ScrollTopModule} from "primeng/scrolltop";
     PlayerDetailComponent,
     MessagesComponent,
     WeekComponent,
-    TodayComponent
+    TodayComponent,
+    PersonsComponent
   ],
   imports: [
     BrowserModule,

@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.schors.gos.micro.tg.TgSender;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.List;
 import java.util.Random;
@@ -13,7 +12,7 @@ import java.util.Random;
 import static org.quartz.DateBuilder.futureDate;
 
 @Slf4j
-public class SendMessageJob implements Job {
+public class RandomMessageJob implements Job {
 
   @SneakyThrows
   @Override

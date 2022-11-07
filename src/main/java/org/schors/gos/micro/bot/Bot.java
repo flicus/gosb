@@ -13,20 +13,16 @@ import org.schors.gos.micro.BattleConfig;
 import org.schors.gos.micro.BirthdayConfig;
 import org.schors.gos.micro.bot.actions.UnknownAction;
 import org.schors.gos.micro.notifier.SendBirthdayJob;
-import org.schors.gos.micro.notifier.SendMessageJob;
+import org.schors.gos.micro.notifier.NotifyJob;
+import org.schors.gos.micro.notifier.RandomMessageJob;
 import org.schors.gos.micro.repository.PersonRepository;
 import org.schors.gos.micro.tg.TgReceiver;
 import org.schors.gos.micro.tg.TgSender;
 import org.schors.gos.micro.tg.TgSession;
 import org.schors.gos.micro.tg.TgSessionManager;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Singleton
@@ -77,13 +73,19 @@ public class Bot {
 
   private void startScheduledTasks() throws SchedulerException {
 
-    JobDetail job = JobBuilder.newJob(SendMessageJob.class).withIdentity("battleNotify").build();
-    job.getJobDataMap().put("msg", battleConfig.getMessages());
-    job.getJobDataMap().put("chatId", chatId);
-    job.getJobDataMap().put("sender", sender);
-    job.getJobDataMap().put("executor", scheduler);
+    JobDetail messageJob = JobBuilder.newJob(NotifyJob.class).withIdentity("registrationNotify").build();
+    messageJob.getJobDataMap().put("msg", "Регистрация в битву!");
+    messageJob.getJobDataMap().put("chatId", chatId);
+    messageJob.getJobDataMap().put("sender", sender);
+    messageJob.getJobDataMap().put("executor", scheduler);
 
-    JobDetail endBattle = JobBuilder.newJob(SendMessageJob.class).withIdentity("endBattleNotify").build();
+    JobDetail randomMessageJob = JobBuilder.newJob(RandomMessageJob.class).withIdentity("battleNotify").build();
+    randomMessageJob.getJobDataMap().put("msg", battleConfig.getMessages());
+    randomMessageJob.getJobDataMap().put("chatId", chatId);
+    randomMessageJob.getJobDataMap().put("sender", sender);
+    randomMessageJob.getJobDataMap().put("executor", scheduler);
+
+    JobDetail endBattle = JobBuilder.newJob(RandomMessageJob.class).withIdentity("endBattleNotify").build();
     endBattle.getJobDataMap().put("msg", battleConfig.getEnds());
     endBattle.getJobDataMap().put("chatId", chatId);
     endBattle.getJobDataMap().put("sender", sender);
@@ -95,6 +97,19 @@ public class Bot {
     birthday.getJobDataMap().put("executor", scheduler);
     birthday.getJobDataMap().put("persons", personRepository);
     birthday.getJobDataMap().put("bdc", birthdayConfig);
+
+    Trigger registration = TriggerBuilder
+        .newTrigger()
+        .startNow()
+        .withIdentity("registration1")
+        .withSchedule(DailyTimeIntervalScheduleBuilder
+            .dailyTimeIntervalSchedule()
+            .onDaysOfTheWeek(DateBuilder.MONDAY,
+                DateBuilder.TUESDAY)
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(11, 0))
+            .withRepeatCount(0))
+        .forJob(messageJob)
+        .build();
 
     Trigger trigger12 = TriggerBuilder
         .newTrigger()
@@ -108,7 +123,7 @@ public class Bot {
                 DateBuilder.SUNDAY)
             .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(12, 0))
             .withRepeatCount(0))
-        .forJob(job)
+        .forJob(randomMessageJob)
         .build();
 
     Trigger trigger15 = TriggerBuilder
@@ -123,7 +138,7 @@ public class Bot {
                 DateBuilder.SUNDAY)
             .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(15, 0))
             .withRepeatCount(0))
-        .forJob(job)
+        .forJob(randomMessageJob)
         .build();
 
     Trigger trigger18 = TriggerBuilder
@@ -138,7 +153,7 @@ public class Bot {
                 DateBuilder.SUNDAY)
             .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(18, 0))
             .withRepeatCount(0))
-        .forJob(job)
+        .forJob(randomMessageJob)
         .build();
 
     Trigger trigger21 = TriggerBuilder
@@ -153,7 +168,7 @@ public class Bot {
                 DateBuilder.SUNDAY)
             .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(21, 0))
             .withRepeatCount(0))
-        .forJob(job)
+        .forJob(randomMessageJob)
         .build();
 
     Trigger endTrigger = TriggerBuilder
@@ -171,7 +186,8 @@ public class Bot {
         .forJob(endBattle)
         .build();
 
-    scheduler.scheduleJob(job, Set.of(trigger12, trigger15, trigger18, trigger21), true);
+    scheduler.scheduleJob(messageJob, registration);    
+    scheduler.scheduleJob(randomMessageJob, Set.of(trigger12, trigger15, trigger18, trigger21), true);
     scheduler.scheduleJob(endBattle, endTrigger);
 
     Trigger bdTrigger = TriggerBuilder

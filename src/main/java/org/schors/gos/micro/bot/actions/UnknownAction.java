@@ -4,6 +4,7 @@ import jakarta.inject.Singleton;
 import org.schors.gos.micro.bot.BotAction;
 import org.schors.gos.micro.tg.TgSession;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import reactor.core.publisher.Mono;
 
@@ -17,7 +18,7 @@ public class UnknownAction extends BotAction {
   }
 
   @Override
-  public Mono<? extends BotApiObject> execute(Update update, TgSession tgSession) {
+  public Mono<Message> execute(Update update, TgSession tgSession) {
     return update.hasMessage() && update.getMessage().getChat().isUserChat()
     ? reply("Unknown command", update)
     : Mono.empty();

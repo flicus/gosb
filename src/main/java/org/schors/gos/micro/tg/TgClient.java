@@ -24,4 +24,8 @@ public interface TgClient {
   @SingleResult
   @Post("sendmessage")
   Mono<ApiResponse<Message>> sendMessage(@Body BotApiMethod sendMessage);
+
+  @SingleResult
+  @Post("deletemessage")
+  Mono<ApiResponse<Boolean>> deleteMessage(@Body BotApiMethod deleteMessage);
 }

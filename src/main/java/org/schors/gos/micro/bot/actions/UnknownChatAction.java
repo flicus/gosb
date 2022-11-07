@@ -4,6 +4,7 @@ import org.schors.gos.micro.bot.BotAction;
 import org.schors.gos.micro.tg.TgSession;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.LeaveChat;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import io.micronaut.context.annotation.Value;
@@ -31,7 +32,7 @@ public class UnknownChatAction extends BotAction {
     }
 
     @Override
-    public Mono<? extends BotApiObject> execute(Update update, TgSession session) {
+    public Mono<Message> execute(Update update, TgSession session) {
 
         log.warn(String.format("!! unwanted message: %s, type: %s, name: %s, who: |s%| s% s%", 
         update.getMessage().getText(),

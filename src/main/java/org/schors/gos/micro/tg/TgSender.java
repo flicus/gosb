@@ -25,6 +25,10 @@ public class TgSender {
     return tgClient.sendMessage(message).map(ApiResponse::getResult);
   }
 
+  public Mono<Boolean> delete(BotApiMethod message) {
+    return tgClient.deleteMessage(message).map(ApiResponse::getResult);
+  }
+
   public void edit(SendMessage sendMessage) {
 
   }

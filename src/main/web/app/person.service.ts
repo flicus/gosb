@@ -40,6 +40,14 @@ export class PersonService {
     );
   }
 
+  updatePerson(person: Person): Observable<Person> {
+    const url = `${this.personsUrl}/${person.id}`;
+    return this.http.put<Person>(url, person, this.httpOptions).pipe(
+      tap((result: Person) => this.log(`person ${person.id} updated: ${result}`)),
+      catchError(this.handleError<Person>(`update person id=${person.id}`))
+    );
+  }
+
   private log(message: string) {
     this.messageService.add(`PlayerService: ${message}`);
   }

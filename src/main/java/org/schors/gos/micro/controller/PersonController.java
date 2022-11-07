@@ -6,7 +6,9 @@ import org.schors.gos.micro.repository.PersonRepository;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
@@ -28,6 +30,9 @@ public class PersonController {
     public Mono<Person> createPerson(@Body Person person) {
         return repository.createPerson(person);
     }
-    
-    
+
+    @Put("/{id}")
+    public Mono<Person> updatePerson(@PathVariable String id, @Body Person person) {
+        return repository.updatePerson(id, person);
+    }
 }

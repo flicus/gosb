@@ -54,6 +54,23 @@ public class PersonRepositoryMSImpl implements PersonRepository {
         });
     }
 
+    @Override
+    public Mono<Person> updatePerson(String id, Person person) {
+        return XThreads.executeSynchronized(() -> {
+            Optional<Person> toUpdate = data().getPersons().stream()
+                    .filter(p -> p.getId().equals(id))
+                    .findAny();
+            if (toUpdate.isPresent()) {
+                data().getPersons().remove(toUpdate.get());
+                data().getPersons().add(person);
+                storageManager.store(data().getPersons());
+                return Mono.just(person);
+            } else {
+                return Mono.error(new IllegalArgumentException("Unknow person: " + person.getId()));
+            }
+        });
+    }
+
     private Data data() {
         return (Data) storageManager.root();
     }

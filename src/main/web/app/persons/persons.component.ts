@@ -11,6 +11,7 @@ import { PersonService } from '../person.service';
 export class PersonsComponent implements OnInit {
 
   persons: Person[] = []
+  selected?: Person;
 
   constructor(private personService: PersonService, private messageService: MessageService) { }
 
@@ -34,6 +35,14 @@ export class PersonsComponent implements OnInit {
         this.persons.push(person);
         element.value = '';
       });
+  }
+
+  onSelect(person: Person): void {
+    this.selected = person;
+  }
+
+  savePerson(): void {
+    
   }
 
   checkAndAdd(event: KeyboardEvent, element: HTMLInputElement): void {

@@ -22,11 +22,12 @@
       </div>
     </ng-template>
     <ng-template let-person pTemplate="body">
-      <tr>
+      <tr (click)="onSelect(person)">
         <td>
           <p-avatar icon="pi pi-user"></p-avatar>
         </td>
         <td>{{person.name}}</td>
+        <td>{{person.date}}</td>
         <td>
           <button (click)="deletePerson(person.id)"
                   class="p-button-rounded p-button-danger p-button-outlined p-button-sm" icon="pi pi-times" pButton
@@ -99,5 +100,16 @@
       </div>
     </ng-template>
   </p-dataView>-->
+</div>
+<div *ngIf="selected" class="card">
+  <h2>{{selected.name | uppercase}} Details</h2>
+  <div>id: {{selected.id}}</div>
+  <div>
+    <label for="person-name">Person name: </label>
+    <input id="person-name" [(ngModel)]="selected.name" placeholder="name">
+    <label for="person-bd">Person birthday: </label>
+    <input id="person-bd" [(ngModel)]="selected.date" placeholder="dd/mm/yyyy">
+  </div>
+  <button (click)="savePerson()" icon="pi pi-check" pButton type="button">Save</button>
 </div>
 

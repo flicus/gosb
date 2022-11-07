@@ -10,5 +10,6 @@ public interface PersonRepository {
     Flux<Person> getAllPersons();
     Mono<Person> createPerson(Person person);
     Mono<Boolean> deletePerson(String id);
+    Mono<Person> updatePerson(String id, Person person);
     
 }

@@ -1,9 +1,8 @@
 <p-scrollTop></p-scrollTop>
 
 <div class="card">
-  <div class="flex card-container blue-container overflow-hidden">
-    <div
-      class="flex-grow-1 flex align-items-center justify-content-center bg-blue-500 font-bold text-white m-2 px-5 py-3 border-round">
+  <div class="grid">
+    <div class="col-6">
       <p-table #dt1 [globalFilterFields]="['name']" [value]="persons" dataKey="person.id" responsiveLayout="scroll"
         styleClass="p-datatable-striped">
         <ng-template pTemplate="caption">
@@ -41,21 +40,27 @@
         </ng-template>
       </p-table>
     </div>
-    <div *ngIf="selected"
-      class="flex-grow-1 flex align-items-center justify-content-center bg-blue-500 font-bold text-white m-2 px-5 py-3 border-round">
-
+    <div *ngIf="selected" class="col-6">
       <h2>{{selected.name | uppercase}} Details</h2>
       <div>id: {{selected.id}}</div>
-      <div>
-        <label for="person-name">Person name: </label>
-        <input id="person-name" [(ngModel)]="selected.name" placeholder="name">
-        <label for="person-bd">Person birthday: </label>
-        <input id="person-bd" [(ngModel)]="selected.date" placeholder="dd/mm/yyyy">
+      <div class="person-details">
+        <div class="p-inputgroup">
+          <div class="p-input-icon-left p-float-label">
+            <i class="pi pi-user"></i>
+            <input id="person-name" [(ngModel)]="selected.name" type="text" pInputText placeholder="Name">
+            <label for="person-name">Имя</label>
+          </div>
+        </div>
+        <div class="p-inputgroup v-spacing">
+          <div class="p-input-icon-left p-float-label">
+            <i class="pi pi-calendar"></i>
+            <input id="person-bd" [(ngModel)]="selected.date" type="text" pInputText placeholder="Birthday">
+            <label for="person-bd">Дата</label>
+          </div>
+        </div>
+        <button (click)="savePerson()" class="p-button v-spacing col-1" icon="pi pi-save" pButton pRipple type="button"
+          label="Save"></button>
       </div>
-      <button (click)="savePerson()" class="p-button-rounded" icon="pi pi-refresh" pButton pRipple
-        type="button"></button>
-      <!-- <button (click)="savePerson()" icon="pi pi-check" pButton type="button">Save</button> -->
-
     </div>
   </div>
 </div>

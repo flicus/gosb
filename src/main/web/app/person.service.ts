@@ -13,9 +13,18 @@ export class PersonService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
   private personsUrl = '/api/person';
+  private testPersons: Person[] = [
+    {id: "123", name: "test1", date: "11/11/1990"},
+    {id: "124", name: "test1 test2", date: "16/01/1996"},
+    {id: "153", name: "test2", date: "11/11/1993"},
+  ];
 
   constructor(private http: HttpClient,
     private messageService: MessageService) { }
+
+    // getPersons(): Observable<Person[]> {
+      // return of(this.testPersons);
+    // }
 
   getPersons(): Observable<Person[]> {
     return this.http.get<Person[]>(this.personsUrl)
@@ -24,7 +33,6 @@ export class PersonService {
         catchError(this.handleError<Person[]>('getPersons', []))
       );
   }
-
 
   addPerson(person: Person): Observable<Person> {
     return this.http.post<Person>(this.personsUrl, person, this.httpOptions)

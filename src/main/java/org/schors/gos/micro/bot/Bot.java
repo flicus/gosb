@@ -98,6 +98,7 @@ public class Bot {
     birthday.getJobDataMap().put("persons", personRepository);
     birthday.getJobDataMap().put("bdc", birthdayConfig);
 
+    //gmt 
     Trigger registration = TriggerBuilder
         .newTrigger()
         .startNow()
@@ -106,7 +107,7 @@ public class Bot {
             .dailyTimeIntervalSchedule()
             .onDaysOfTheWeek(DateBuilder.MONDAY,
                 DateBuilder.TUESDAY)
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(11, 0))
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(9, 0))
             .withRepeatCount(0))
         .forJob(messageJob)
         .build();
@@ -121,7 +122,7 @@ public class Bot {
                 DateBuilder.WEDNESDAY,
                 DateBuilder.FRIDAY,
                 DateBuilder.SUNDAY)
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(12, 0))
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(10, 0))
             .withRepeatCount(0))
         .forJob(randomMessageJob)
         .build();
@@ -136,7 +137,7 @@ public class Bot {
                 DateBuilder.WEDNESDAY,
                 DateBuilder.FRIDAY,
                 DateBuilder.SUNDAY)
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(15, 0))
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(13, 0))
             .withRepeatCount(0))
         .forJob(randomMessageJob)
         .build();
@@ -151,7 +152,7 @@ public class Bot {
                 DateBuilder.WEDNESDAY,
                 DateBuilder.FRIDAY,
                 DateBuilder.SUNDAY)
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(18, 0))
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(16, 0))
             .withRepeatCount(0))
         .forJob(randomMessageJob)
         .build();
@@ -166,7 +167,7 @@ public class Bot {
                 DateBuilder.WEDNESDAY,
                 DateBuilder.FRIDAY,
                 DateBuilder.SUNDAY)
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(21, 0))
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(19, 0))
             .withRepeatCount(0))
         .forJob(randomMessageJob)
         .build();
@@ -181,7 +182,7 @@ public class Bot {
                 DateBuilder.WEDNESDAY,
                 DateBuilder.FRIDAY,
                 DateBuilder.SUNDAY)
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(21, 55))
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(19, 55))
             .withRepeatCount(0))
         .forJob(endBattle)
         .build();
@@ -196,7 +197,7 @@ public class Bot {
         .withIdentity("birthday")
         .withSchedule(DailyTimeIntervalScheduleBuilder
             .dailyTimeIntervalSchedule()
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(7, 0))
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(5, 0))
             .withRepeatCount(0))
         .forJob(birthday)
         .build();

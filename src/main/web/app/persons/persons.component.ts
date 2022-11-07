@@ -42,7 +42,12 @@ export class PersonsComponent implements OnInit {
   }
 
   savePerson(): void {
-    
+    if (this.selected) {
+      this.personService.updatePerson(this.selected)
+      .subscribe(person => {
+        console.error(person);
+      });
+    }
   }
 
   checkAndAdd(event: KeyboardEvent, element: HTMLInputElement): void {

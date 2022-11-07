@@ -33,7 +33,7 @@ public class UnknownChatAction extends BotAction {
     @Override
     public Mono<? extends BotApiObject> execute(Update update, TgSession session) {
 
-        log.warn(String.format("!! unwanted message: %s, type: %s, name: %s, who: 's%' s% s%", 
+        log.warn(String.format("!! unwanted message: %s, type: %s, name: %s, who: |s%| s% s%", 
         update.getMessage().getText(),
         update.getMessage().getChat().getType(),
         update.getMessage().getChat().getUserName(),

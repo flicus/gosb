@@ -70,7 +70,7 @@ public class Bot {
               .min((o1, o2) -> o1.order() > o2.order() ? 1 : -1)
               .orElse(defaultAction)
               .execute(update, session)
-              .log()
+            //   .log()
               .subscribe();
         });
   }

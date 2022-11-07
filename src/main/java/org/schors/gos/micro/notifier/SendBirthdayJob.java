@@ -49,8 +49,7 @@ public class SendBirthdayJob implements Job {
             .send(SendMessage.builder()
                 .chatId(chatId)
                 .text("С днем рождения, " + p.getName())
-                .build())
-            .log());
+                .build()));
   }
 
 }

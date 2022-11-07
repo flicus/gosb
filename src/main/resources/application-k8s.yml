@@ -79,7 +79,3 @@ kubernetes:
     config-maps:
       paths:
         - /etc/configuration
-
-logger:
-  levels:
-    '*': INFO

@@ -12,7 +12,6 @@ import java.util.Random;
 
 import static org.quartz.DateBuilder.futureDate;
 
-
 @Slf4j
 public class SendMessageJob implements Job {
 
@@ -34,22 +33,21 @@ public class SendMessageJob implements Job {
         .chatId(chatId)
         .text(messages.get(idx))
         .build())
-      .log()
-      .block();
+        .block();
 
     JobDetail job = JobBuilder
-      .newJob(DeleteMessageJob.class)
-      .withIdentity("deleteNotify" + message.getMessageId())
-      .build();
+        .newJob(DeleteMessageJob.class)
+        .withIdentity("deleteNotify" + message.getMessageId())
+        .build();
     job.getJobDataMap().put("msgId", message.getMessageId());
     job.getJobDataMap().put("chatId", chatId);
     job.getJobDataMap().put("sender", sender);
     Trigger deleteTrigger = TriggerBuilder
-      .newTrigger()
-      .startAt(futureDate(1, DateBuilder.IntervalUnit.HOUR))
-      .withIdentity("deleteNotify" + message.getMessageId())
-      .forJob(job)
-      .build();
+        .newTrigger()
+        .startAt(futureDate(1, DateBuilder.IntervalUnit.HOUR))
+        .withIdentity("deleteNotify" + message.getMessageId())
+        .forJob(job)
+        .build();
     scheduler.scheduleJob(job, deleteTrigger);
   }
 }

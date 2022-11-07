@@ -21,6 +21,6 @@ public class DeleteMessageJob implements Job {
     log.debug("delete: " + msgId);
     sender
       .send(DeleteMessage.builder().chatId(chatId).messageId(msgId).build())
-      .log();
+      .block();
   }
 }

@@ -69,12 +69,12 @@ micronaut:
   application:
     name: microGosb
 
-logger:
-  levels:
-    io.micronaut: DEBUG
-    io.micronaut.context: DEBUG
-    org.schors: TRACE
-    org.telegram: DEBUG
+# logger:
+  # levels:
+    # io.micronaut: DEBUG
+    # io.micronaut.context: DEBUG
+    # org.schors: TRACE
+    # org.telegram: DEBUG
 
 endpoints:
   info:

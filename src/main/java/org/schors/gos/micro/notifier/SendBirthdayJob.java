@@ -30,19 +30,20 @@ public class SendBirthdayJob implements Job {
     BirthdayConfig bdc = (BirthdayConfig) context.getJobDetail().getJobDataMap().get("bdc");
     log.debug("trigger: " + context.getTrigger().getKey().getName());
 
+    Date now = new Date();
     Flux.concat(Flux.fromStream(bdc.getBirthdays().stream()),
         personRepository.getAllPersons())
         .distinct()
         .filter(p -> {
+          log.debug(p.toString());
           Date date = null;
           try {
             date = dateFormat.parse(p.getDate());
-          } catch (ParseException e) {
+          } catch (Exception e) {
             log.warn("Wrong date: ", e);
           }
           if (date == null)
             return false;
-          Date now = new Date();
           return now.getDay() == date.getDay() && now.getMonth() == date.getMonth();
         })
         .subscribe(p -> sender

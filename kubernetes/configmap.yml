@@ -39,12 +39,6 @@ data:
           date: "12/12/1980"
         - name: "Фурия"
           date: "19/08/1980"
-    logger:
-      levels:
-        io.micronaut: INFO
-        io.micronaut.context: INFO
-        org.schors: TRACE
-        org.telegram: TRACE
     microstream:
       storage:
         event:

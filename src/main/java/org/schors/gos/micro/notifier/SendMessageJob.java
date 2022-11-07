@@ -29,25 +29,29 @@ public class SendMessageJob implements Job {
     r.setSeed(System.currentTimeMillis());
     int idx = r.nextInt(messages.size());
 
-    Message message = sender.send(SendMessage.builder()
+    sender.send(SendMessage.builder()
         .chatId(chatId)
         .text(messages.get(idx))
         .build())
-        .block();
-
-    JobDetail job = JobBuilder
-        .newJob(DeleteMessageJob.class)
-        .withIdentity("deleteNotify" + message.getMessageId())
-        .build();
-    job.getJobDataMap().put("msgId", message.getMessageId());
-    job.getJobDataMap().put("chatId", chatId);
-    job.getJobDataMap().put("sender", sender);
-    Trigger deleteTrigger = TriggerBuilder
-        .newTrigger()
-        .startAt(futureDate(1, DateBuilder.IntervalUnit.HOUR))
-        .withIdentity("deleteNotify" + message.getMessageId())
-        .forJob(job)
-        .build();
-    scheduler.scheduleJob(job, deleteTrigger);
+        .subscribe(message -> {
+          JobDetail job = JobBuilder
+              .newJob(DeleteMessageJob.class)
+              .withIdentity("deleteNotify" + message.getMessageId())
+              .build();
+          job.getJobDataMap().put("msgId", message.getMessageId());
+          job.getJobDataMap().put("chatId", chatId);
+          job.getJobDataMap().put("sender", sender);
+          Trigger deleteTrigger = TriggerBuilder
+              .newTrigger()
+              .startAt(futureDate(1, DateBuilder.IntervalUnit.HOUR))
+              .withIdentity("deleteNotify" + message.getMessageId())
+              .forJob(job)
+              .build();
+          try {
+            scheduler.scheduleJob(job, deleteTrigger);
+          } catch (SchedulerException e) {
+            log.warn(e.getMessage(), e);
+          }
+        });
   }
 }

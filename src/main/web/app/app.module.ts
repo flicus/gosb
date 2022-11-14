@@ -16,6 +16,7 @@ import {DataViewModule} from 'primeng/dataview';
 import {AvatarModule} from 'primeng/avatar';
 import {InputTextModule} from 'primeng/inputtext';
 import {InplaceModule} from 'primeng/inplace';
+import {ImageModule} from 'primeng/image'
 import {CardModule} from "primeng/card";
 import {TableModule} from "primeng/table";
 import {ChipModule} from "primeng/chip";
@@ -24,6 +25,7 @@ import {TagModule} from "primeng/tag";
 import {DragDropModule} from "primeng/dragdrop";
 import {ScrollTopModule} from "primeng/scrolltop";
 import { PersonsComponent } from './persons/persons.component';
+import { EventsComponent } from './events/events.component';
 
 
 @NgModule({
@@ -34,7 +36,8 @@ import { PersonsComponent } from './persons/persons.component';
     MessagesComponent,
     WeekComponent,
     TodayComponent,
-    PersonsComponent
+    PersonsComponent,
+    EventsComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +56,8 @@ import { PersonsComponent } from './persons/persons.component';
     ChipModule,
     TagModule,
     DragDropModule,
-    ScrollTopModule
+    ScrollTopModule,
+    ImageModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -65,6 +65,7 @@ micronaut:
       assets:
         enabled: true
         mapping: /**
+        # paths: file:./dist
         paths: classpath:battle
   application:
     name: microGosb

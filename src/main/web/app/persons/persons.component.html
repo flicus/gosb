@@ -54,7 +54,8 @@
         <div class="p-inputgroup v-spacing">
           <div class="p-input-icon-left p-float-label">
             <i class="pi pi-calendar"></i>
-            <input id="person-bd" [(ngModel)]="selected.date" type="text" pInputText placeholder="Birthday">
+            <!-- <p-inputMask id="person-bd" mask="99/99/9999" [(ngModel)]="selected.date"></p-inputMask> -->
+            <input id="person-bd" [(ngModel)]="selected.date" mask="99/99/9999" type="text" pInputText pInputMask placeholder="Birthday">
             <label for="person-bd">Дата</label>
           </div>
         </div>

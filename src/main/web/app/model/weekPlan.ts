@@ -1,6 +1,6 @@
 export interface WeekPlan {
   date: string,
-  damage:
+  damage: string,
   defenceB2: string,
   attackB3: string,
   defenceB3: string,

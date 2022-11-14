@@ -1,8 +1,24 @@
-<div class="p-d-flex">
-  <div>
-    <p-tabMenu [activeItem]="items[0]" [model]="items"></p-tabMenu>
-  </div>
-</div>
+<p-card header="Лосяка инкорпорейтед" subheader="представляет" [style]="{width: '800px'}" styleClass="p-card-shadow">
+  <ng-template pTemplate="header">
+    <p-image src="assets/cody-moose-logo.png" alt="лосенок" width="80px"></p-image>
+  </ng-template>
+  <p-tabMenu [activeItem]="items[0]" [model]="items"></p-tabMenu>
+  <!-- <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt -->
+      <!-- quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque quas!</p> -->
+  <!-- <ng-template pTemplate="footer"> -->
+      <!-- <p-button label="Save" icon="pi pi-check"></p-button> -->
+      <!-- <p-button label="Cancel" icon="pi pi-times" styleClass="p-button-secondary" [style]="{'margin-left': '.5em'}"></p-button> -->
+  <!-- </ng-template> -->
+</p-card>
+
+<!-- <div class="flex flex-row align-items-center"> -->
+  <!-- <div> -->
+    <!-- <p-image src="assets/cody-moose-logo.png" alt="лосенок" width="80"></p-image> -->
+  <!-- </div> -->
+  <!-- <div> -->
+    <!-- <p-tabMenu [activeItem]="items[0]" [model]="items"></p-tabMenu> -->
+  <!-- </div> -->
+<!-- </div> -->
 <router-outlet></router-outlet>
 <!--<app-messages></app-messages>-->
 <!--<img src="../assets/cody-moose-logo.png" width="800">-->

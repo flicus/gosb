@@ -17,11 +17,12 @@
 
   <properties>
     <packaging>docker</packaging>
+    <!-- <packaging>jar</packaging> -->
     <jdk.version>17</jdk.version>
     <release.version>17</release.version>
     <micronaut.version>3.7.3</micronaut.version>
     <micronaut.runtime>netty</micronaut.runtime>
-    <exec.mainClass>org.schors.gos.Application</exec.mainClass>
+    <exec.mainClass>org.schors.gos.micro.Application</exec.mainClass>
     <gitCommitIdPlugin.version>4.0.5</gitCommitIdPlugin.version>
     <angular.project.location>src/main/web</angular.project.location>
     <angular.project.nodeinstallation>node</angular.project.nodeinstallation>
@@ -230,7 +231,6 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <!-- <version>1.6</version> -->
         <configuration>
           <workingDirectory>${project.basedir}</workingDirectory>
           <installDirectory>${angular.project.nodeinstallation}</installDirectory>
@@ -251,7 +251,6 @@
             <goals>
               <goal>npm</goal>
             </goals>
-            <!-- Optional configuration which provides for running any npm command -->
             <configuration>
               <arguments>install</arguments>
             </configuration>

@@ -12,12 +12,14 @@ import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+import java.util.Set;
+
 @Slf4j
 @Singleton
 public class UnknownChatAction extends BotAction {
 
     @Value("${gosb.bot.groupId}")
-    private Long chatId;
+    private Set<Long> chatId;
 
     @Override
     public int order() {
@@ -26,15 +28,15 @@ public class UnknownChatAction extends BotAction {
 
     @Override
     public Boolean match(Update update, TgSession session) {
-        return update.hasMessage() 
+        return update.hasMessage()
         && !update.getMessage().getChat().isUserChat()
-        && update.getMessage().getChatId() != chatId;
+        && !chatId.contains(update.getMessage().getChatId());
     }
 
     @Override
     public Mono<Message> execute(Update update, TgSession session) {
 
-        log.warn(String.format("!! unwanted message: %s, type: %s, name: %s, who: |s%| s% s%", 
+        log.warn(String.format("!! unwanted message: %s, type: %s, name: %s, who: 's%' s% s%",
         update.getMessage().getText(),
         update.getMessage().getChat().getType(),
         update.getMessage().getChat().getUserName(),
@@ -42,7 +44,9 @@ public class UnknownChatAction extends BotAction {
         update.getMessage().getFrom().getFirstName(),
         update.getMessage().getFrom().getLastName()));
 
-        return sender.send(LeaveChat.builder().chatId(update.getMessage().getChatId()).build());
+        return Mono.empty();
+
+//        return sender.send(LeaveChat.builder().chatId(update.getMessage().getChatId()).build());
     }
-    
+
 }

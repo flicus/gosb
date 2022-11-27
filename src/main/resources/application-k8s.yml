@@ -4,8 +4,9 @@ gosb:
     enabled: true
     # name: "replace_me"
     # token: "replace_me"
-    groupId: -1001075972160
-  #    groupId: "-417220779"
+    groupId:
+      - -1001075972160
+      - -417220779
   data: ms
   #  data: db
   #  data: redis

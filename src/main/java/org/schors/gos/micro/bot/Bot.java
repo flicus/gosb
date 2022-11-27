@@ -60,6 +60,7 @@ public class Bot {
 
     receiver
         .subscribe(update -> {
+          log.debug(update.toString());
           TgSession session = sessionManager.getSession(update);
           actions.stream()
               .filter(botAction -> botAction.match(update, session))
@@ -98,7 +99,7 @@ public class Bot {
     birthday.getJobDataMap().put("persons", personRepository);
     birthday.getJobDataMap().put("bdc", birthdayConfig);
 
-    //gmt 
+    //gmt
     Trigger registration = TriggerBuilder
         .newTrigger()
         .startNow()
@@ -187,7 +188,7 @@ public class Bot {
         .forJob(endBattle)
         .build();
 
-    scheduler.scheduleJob(messageJob, registration);    
+    scheduler.scheduleJob(messageJob, registration);
     scheduler.scheduleJob(randomMessageJob, Set.of(trigger12, trigger15, trigger18, trigger21), true);
     scheduler.scheduleJob(endBattle, endTrigger);
 

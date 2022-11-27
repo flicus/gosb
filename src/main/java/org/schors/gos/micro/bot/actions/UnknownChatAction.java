@@ -18,8 +18,8 @@ import java.util.Set;
 @Singleton
 public class UnknownChatAction extends BotAction {
 
-    @Value("${gosb.bot.groupId}")
-    private Set<Long> chatId;
+    @Value("${gosb.bot.readGroups}")
+    private Set<Long> readGroups;
 
     @Override
     public int order() {
@@ -30,7 +30,7 @@ public class UnknownChatAction extends BotAction {
     public Boolean match(Update update, TgSession session) {
         return update.hasMessage()
         && !update.getMessage().getChat().isUserChat()
-        && !chatId.contains(update.getMessage().getChatId());
+        && !readGroups.contains(update.getMessage().getChatId());
     }
 
     @Override

@@ -4,9 +4,11 @@ gosb:
     enabled: true
     # name: "replace_me"
     # token: "replace_me"
-    groupId:
+    readGroups:
       - -1001075972160
       - -417220779
+    writeGroups:
+      - -1001075972160
   data: ms
   #  data: db
   #  data: redis

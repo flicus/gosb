@@ -11,7 +11,11 @@ data:
         enabled: true
         name: "replace_me"
         token: "replace_me"
-        groupId: "-1001075972160"
+        readGroups:
+          - -1001075972160
+          - -417220779
+        writeGroups:
+          - -1001075972160
       data: ms
       battle:
         messages:

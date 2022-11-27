@@ -49,8 +49,8 @@ public class Bot {
   @Inject
   private PersonRepository personRepository;
 
-  @Value("${gosb.bot.groupId}")
-  private Long chatId;
+  @Value("${gosb.bot.writeGroups}")
+  private Set<Long> writeGroups;
 
   @SneakyThrows
   @EventListener
@@ -76,24 +76,24 @@ public class Bot {
 
     JobDetail messageJob = JobBuilder.newJob(NotifyJob.class).withIdentity("registrationNotify").build();
     messageJob.getJobDataMap().put("msg", "Регистрация в битву!");
-    messageJob.getJobDataMap().put("chatId", chatId);
+    messageJob.getJobDataMap().put("chatId", writeGroups);
     messageJob.getJobDataMap().put("sender", sender);
     messageJob.getJobDataMap().put("executor", scheduler);
 
     JobDetail randomMessageJob = JobBuilder.newJob(RandomMessageJob.class).withIdentity("battleNotify").build();
     randomMessageJob.getJobDataMap().put("msg", battleConfig.getMessages());
-    randomMessageJob.getJobDataMap().put("chatId", chatId);
+    randomMessageJob.getJobDataMap().put("chatId", writeGroups);
     randomMessageJob.getJobDataMap().put("sender", sender);
     randomMessageJob.getJobDataMap().put("executor", scheduler);
 
     JobDetail endBattle = JobBuilder.newJob(RandomMessageJob.class).withIdentity("endBattleNotify").build();
     endBattle.getJobDataMap().put("msg", battleConfig.getEnds());
-    endBattle.getJobDataMap().put("chatId", chatId);
+    endBattle.getJobDataMap().put("chatId", writeGroups);
     endBattle.getJobDataMap().put("sender", sender);
     endBattle.getJobDataMap().put("executor", scheduler);
 
     JobDetail birthday = JobBuilder.newJob(SendBirthdayJob.class).withIdentity("birtday").build();
-    birthday.getJobDataMap().put("chatId", chatId);
+    birthday.getJobDataMap().put("chatId", writeGroups);
     birthday.getJobDataMap().put("sender", sender);
     birthday.getJobDataMap().put("executor", scheduler);
     birthday.getJobDataMap().put("persons", personRepository);

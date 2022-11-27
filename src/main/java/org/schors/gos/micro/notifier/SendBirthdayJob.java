@@ -7,6 +7,7 @@ import reactor.core.publisher.Flux;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -24,7 +25,7 @@ public class SendBirthdayJob implements Job {
   @SneakyThrows
   @Override
   public void execute(JobExecutionContext context) throws JobExecutionException {
-    Long chatId = context.getJobDetail().getJobDataMap().getLong("chatId");
+    Set<Long> chatId = (Set<Long>) context.getJobDetail().getJobDataMap().get("chatId");
     TgSender sender = (TgSender) context.getJobDetail().getJobDataMap().get("sender");
     PersonRepository personRepository = (PersonRepository) context.getJobDetail().getJobDataMap().get("persons");
     BirthdayConfig bdc = (BirthdayConfig) context.getJobDetail().getJobDataMap().get("bdc");
@@ -33,24 +34,24 @@ public class SendBirthdayJob implements Job {
     Date now = new Date();
     Flux.concat(Flux.fromStream(bdc.getBirthdays().stream()),
         personRepository.getAllPersons())
-        .distinct()
-        .filter(p -> {
-          log.debug(p.toString());
-          Date date = null;
-          try {
-            date = dateFormat.parse(p.getDate());
-          } catch (Exception e) {
-            log.warn("Wrong date: ", e);
-          }
-          if (date == null)
-            return false;
-          return now.getDay() == date.getDay() && now.getMonth() == date.getMonth();
-        })
-        .subscribe(p -> sender
-            .send(SendMessage.builder()
-                .chatId(chatId)
-                .text("С днем рождения, " + p.getName())
-                .build()));
+      .distinct()
+      .filter(p -> {
+        log.debug(p.toString());
+        Date date = null;
+        try {
+          date = dateFormat.parse(p.getDate());
+        } catch (Exception e) {
+          log.warn("Wrong date: ", e);
+        }
+        if (date == null)
+          return false;
+        return now.getDay() == date.getDay() && now.getMonth() == date.getMonth();
+      })
+      .subscribe(p -> chatId.forEach(cid -> sender
+        .send(SendMessage.builder()
+          .chatId(cid)
+          .text("С днем рождения, " + p.getName())
+          .build())));
   }
 
 }

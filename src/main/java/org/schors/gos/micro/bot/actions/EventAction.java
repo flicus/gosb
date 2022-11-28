@@ -5,6 +5,7 @@ import jakarta.inject.Singleton;
 import org.schors.gos.micro.bot.BotAction;
 import org.schors.gos.micro.repository.EventRepository;
 import org.schors.gos.micro.tg.TgSession;
+import org.schors.gos.micro.tg.UpdateType;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;

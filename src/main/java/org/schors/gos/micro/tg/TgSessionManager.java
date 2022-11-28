@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -20,24 +21,37 @@ public class TgSessionManager {
     .expireAfterAccess(8, TimeUnit.HOURS)
     .build();
 
-  public TgSession getSession(Update update) {
-    String sessionId = sessionId(update);
-    TgSession session = sessions.getIfPresent(sessionId);
-    if (session == null) {
-      session = new TgSession();
-      sessions.put(sessionId, session);
-    }
-    return session;
+  public Optional<TgSession> getSession(Update update) {
+    return sessionId(update)
+      .map(sessionId -> {
+        TgSession session = sessions.getIfPresent(sessionId);
+        if (session == null) {
+          session = new TgSession();
+          sessions.put(sessionId, session);
+        }
+        return session;
+      });
   }
 
-  private String sessionId(final Update update) {
-    Long chatId = Optional.ofNullable(update.getMessage())
-      .map(Message::getChatId)
-      .orElseGet(() -> update.getCallbackQuery().getMessage().getChatId());
-    User user = Optional.ofNullable(update.getMessage())
-      .map(Message::getFrom)
-      .orElseGet(() -> update.getCallbackQuery().getFrom());
-    return "" + chatId + "|" + user.getId();
+  private Optional<String> sessionId(final Update update) {
+    return Arrays.stream(UpdateType.values())
+      .filter(updateType -> updateType.test(update))
+      .findAny()
+      .map(updateType -> String.format("%d|%d", updateType.getChatId(update), updateType.getUser(update).getId()));
+  }
+
+  private Optional<User> extractUser(final Update update) {
+    return Arrays.stream(UpdateType.values())
+      .filter(updateType -> updateType.test(update))
+      .findAny()
+      .map(updateType -> updateType.getUser(update));
+  }
+
+  private Optional<Long> extractChatId(final Update update) {
+    return Arrays.stream(UpdateType.values())
+      .filter(updateType -> updateType.test(update))
+      .findAny()
+      .map(updateType -> updateType.getChatId(update));
   }
 
 }

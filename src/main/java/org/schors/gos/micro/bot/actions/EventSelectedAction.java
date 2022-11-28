@@ -30,7 +30,6 @@ public class EventSelectedAction extends BotAction {
     String id = update.getCallbackQuery().getData();
     EventRecord eventRecord = new EventRecord(new Date().toString(), value);
     return repository.createRecord(id, eventRecord)
-      // .log()
       .flatMap((record) -> replyCallback("Добавил", update));
   }
 }

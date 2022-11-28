@@ -22,6 +22,7 @@ import org.schors.gos.micro.tg.TgSession;
 import org.schors.gos.micro.tg.TgSessionManager;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -59,17 +60,20 @@ public class Bot {
     startScheduledTasks();
 
     receiver
-        .subscribe(update -> {
-          log.debug(update.toString());
-          TgSession session = sessionManager.getSession(update);
+      .subscribe(update -> {
+        log.debug(update.toString());
+        Optional<TgSession> tgSession = sessionManager.getSession(update);
+        if (tgSession.isPresent()) {
           actions.stream()
-              .filter(botAction -> botAction.match(update, session))
-              .min((o1, o2) -> o1.order() > o2.order() ? 1 : -1)
-              .orElse(defaultAction)
-              .execute(update, session)
-            //   .log()
-              .subscribe();
-        });
+            .filter(botAction -> botAction.match(update, tgSession.get()))
+            .min((o1, o2) -> o1.order() > o2.order() ? 1 : -1)
+            .orElse(defaultAction)
+            .execute(update, tgSession.get())
+            .subscribe();
+        } else {
+          log.error("!: unable to detect update type");
+        }
+      });
   }
 
   private void startScheduledTasks() throws SchedulerException {
@@ -101,107 +105,107 @@ public class Bot {
 
     //gmt
     Trigger registration = TriggerBuilder
-        .newTrigger()
-        .startNow()
-        .withIdentity("registration1")
-        .withSchedule(DailyTimeIntervalScheduleBuilder
-            .dailyTimeIntervalSchedule()
-            .onDaysOfTheWeek(DateBuilder.MONDAY,
-                DateBuilder.TUESDAY)
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(9, 0))
-            .withRepeatCount(0))
-        .forJob(messageJob)
-        .build();
+      .newTrigger()
+      .startNow()
+      .withIdentity("registration1")
+      .withSchedule(DailyTimeIntervalScheduleBuilder
+        .dailyTimeIntervalSchedule()
+        .onDaysOfTheWeek(DateBuilder.MONDAY,
+          DateBuilder.TUESDAY)
+        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(9, 0))
+        .withRepeatCount(0))
+      .forJob(messageJob)
+      .build();
 
     Trigger trigger12 = TriggerBuilder
-        .newTrigger()
-        .startNow()
-        .withIdentity("battle12")
-        .withSchedule(DailyTimeIntervalScheduleBuilder
-            .dailyTimeIntervalSchedule()
-            .onDaysOfTheWeek(DateBuilder.TUESDAY,
-                DateBuilder.WEDNESDAY,
-                DateBuilder.FRIDAY,
-                DateBuilder.SUNDAY)
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(10, 0))
-            .withRepeatCount(0))
-        .forJob(randomMessageJob)
-        .build();
+      .newTrigger()
+      .startNow()
+      .withIdentity("battle12")
+      .withSchedule(DailyTimeIntervalScheduleBuilder
+        .dailyTimeIntervalSchedule()
+        .onDaysOfTheWeek(DateBuilder.TUESDAY,
+          DateBuilder.WEDNESDAY,
+          DateBuilder.FRIDAY,
+          DateBuilder.SUNDAY)
+        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(10, 0))
+        .withRepeatCount(0))
+      .forJob(randomMessageJob)
+      .build();
 
     Trigger trigger15 = TriggerBuilder
-        .newTrigger()
-        .startNow()
-        .withIdentity("battle15")
-        .withSchedule(DailyTimeIntervalScheduleBuilder
-            .dailyTimeIntervalSchedule()
-            .onDaysOfTheWeek(DateBuilder.TUESDAY,
-                DateBuilder.WEDNESDAY,
-                DateBuilder.FRIDAY,
-                DateBuilder.SUNDAY)
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(13, 0))
-            .withRepeatCount(0))
-        .forJob(randomMessageJob)
-        .build();
+      .newTrigger()
+      .startNow()
+      .withIdentity("battle15")
+      .withSchedule(DailyTimeIntervalScheduleBuilder
+        .dailyTimeIntervalSchedule()
+        .onDaysOfTheWeek(DateBuilder.TUESDAY,
+          DateBuilder.WEDNESDAY,
+          DateBuilder.FRIDAY,
+          DateBuilder.SUNDAY)
+        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(13, 0))
+        .withRepeatCount(0))
+      .forJob(randomMessageJob)
+      .build();
 
     Trigger trigger18 = TriggerBuilder
-        .newTrigger()
-        .startNow()
-        .withIdentity("battle18")
-        .withSchedule(DailyTimeIntervalScheduleBuilder
-            .dailyTimeIntervalSchedule()
-            .onDaysOfTheWeek(DateBuilder.TUESDAY,
-                DateBuilder.WEDNESDAY,
-                DateBuilder.FRIDAY,
-                DateBuilder.SUNDAY)
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(16, 0))
-            .withRepeatCount(0))
-        .forJob(randomMessageJob)
-        .build();
+      .newTrigger()
+      .startNow()
+      .withIdentity("battle18")
+      .withSchedule(DailyTimeIntervalScheduleBuilder
+        .dailyTimeIntervalSchedule()
+        .onDaysOfTheWeek(DateBuilder.TUESDAY,
+          DateBuilder.WEDNESDAY,
+          DateBuilder.FRIDAY,
+          DateBuilder.SUNDAY)
+        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(16, 0))
+        .withRepeatCount(0))
+      .forJob(randomMessageJob)
+      .build();
 
     Trigger trigger21 = TriggerBuilder
-        .newTrigger()
-        .startNow()
-        .withIdentity("battle21")
-        .withSchedule(DailyTimeIntervalScheduleBuilder
-            .dailyTimeIntervalSchedule()
-            .onDaysOfTheWeek(DateBuilder.TUESDAY,
-                DateBuilder.WEDNESDAY,
-                DateBuilder.FRIDAY,
-                DateBuilder.SUNDAY)
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(19, 0))
-            .withRepeatCount(0))
-        .forJob(randomMessageJob)
-        .build();
+      .newTrigger()
+      .startNow()
+      .withIdentity("battle21")
+      .withSchedule(DailyTimeIntervalScheduleBuilder
+        .dailyTimeIntervalSchedule()
+        .onDaysOfTheWeek(DateBuilder.TUESDAY,
+          DateBuilder.WEDNESDAY,
+          DateBuilder.FRIDAY,
+          DateBuilder.SUNDAY)
+        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(19, 0))
+        .withRepeatCount(0))
+      .forJob(randomMessageJob)
+      .build();
 
     Trigger endTrigger = TriggerBuilder
-        .newTrigger()
-        .startNow()
-        .withIdentity("endBattle")
-        .withSchedule(DailyTimeIntervalScheduleBuilder
-            .dailyTimeIntervalSchedule()
-            .onDaysOfTheWeek(DateBuilder.TUESDAY,
-                DateBuilder.WEDNESDAY,
-                DateBuilder.FRIDAY,
-                DateBuilder.SUNDAY)
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(19, 55))
-            .withRepeatCount(0))
-        .forJob(endBattle)
-        .build();
+      .newTrigger()
+      .startNow()
+      .withIdentity("endBattle")
+      .withSchedule(DailyTimeIntervalScheduleBuilder
+        .dailyTimeIntervalSchedule()
+        .onDaysOfTheWeek(DateBuilder.TUESDAY,
+          DateBuilder.WEDNESDAY,
+          DateBuilder.FRIDAY,
+          DateBuilder.SUNDAY)
+        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(19, 55))
+        .withRepeatCount(0))
+      .forJob(endBattle)
+      .build();
 
     scheduler.scheduleJob(messageJob, registration);
     scheduler.scheduleJob(randomMessageJob, Set.of(trigger12, trigger15, trigger18, trigger21), true);
     scheduler.scheduleJob(endBattle, endTrigger);
 
     Trigger bdTrigger = TriggerBuilder
-        .newTrigger()
-        .startNow()
-        .withIdentity("birthday")
-        .withSchedule(DailyTimeIntervalScheduleBuilder
-            .dailyTimeIntervalSchedule()
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(5, 0))
-            .withRepeatCount(0))
-        .forJob(birthday)
-        .build();
+      .newTrigger()
+      .startNow()
+      .withIdentity("birthday")
+      .withSchedule(DailyTimeIntervalScheduleBuilder
+        .dailyTimeIntervalSchedule()
+        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(5, 0))
+        .withRepeatCount(0))
+      .forJob(birthday)
+      .build();
 
     scheduler.scheduleJob(birthday, bdTrigger);
 

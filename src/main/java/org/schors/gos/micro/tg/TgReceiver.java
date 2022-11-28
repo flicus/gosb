@@ -24,7 +24,7 @@ public class TgReceiver {
   private Consumer<Update> consumer;
   private TgClient tgClient;
   private Scheduler httpExecutor = Schedulers.newSingle("receiver::http");
-  private Scheduler actionExecutors = Schedulers.newBoundedElastic(10, 20, "receiver::actions");
+//  private Scheduler actionExecutors = Schedulers.newBoundedElastic(10, 20, "receiver::actions");
 
   public TgReceiver(TgClient tgClient) {
     this.tgClient = tgClient;
@@ -42,12 +42,7 @@ public class TgReceiver {
       log.debug("get: " + new Date());
       Optional.ofNullable(consumer)
         .ifPresent(updateConsumer -> {
-          GetUpdates request = GetUpdates
-            .builder()
-            .limit(100)
-            .timeout(50)
-            .offset(lastReceivedUpdate + 1)
-            .build();
+          GetUpdates request = GetUpdates.builder().limit(100).timeout(50).offset(lastReceivedUpdate + 1).build();
           tgClient.getUpdates(request)
             .flatMapMany(arrayListApiResponse -> Flux.fromIterable(arrayListApiResponse.getResult()))
             .filter(update -> lastReceivedUpdate < update.getUpdateId())
@@ -56,10 +51,9 @@ public class TgReceiver {
                 lastReceivedUpdate = update.getUpdateId();
               }
             })
-            .doOnError(throwable -> log.error("!: " + throwable.getMessage()))
             .doFinally(signalType -> httpExecutor.schedule(new Worker(), 500, TimeUnit.MILLISECONDS))
-            .publishOn(actionExecutors)
-            .subscribe(updateConsumer);
+//            .publishOn(actionExecutors)
+            .subscribe(updateConsumer, throwable -> log.error("!: " + throwable.getMessage()));
         });
     }
   }

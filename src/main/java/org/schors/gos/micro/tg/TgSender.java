@@ -4,6 +4,8 @@ import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodBoolean;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.ApiResponse;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -21,7 +23,7 @@ public class TgSender {
     this.tgClient = tgClient;
   }
 
-  public Mono<Message> send(BotApiMethod message) {
+  public Mono<Object> send(BotApiMethod<?> message) {
     log.debug("###> {}", message);
     return tgClient
       .sendMessage(message)

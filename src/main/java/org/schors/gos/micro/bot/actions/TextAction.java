@@ -24,7 +24,7 @@ public class TextAction extends BotAction {
   }
 
   @Override
-  public Mono<Message> execute(Update update, TgSession tgSession) {
+  public Mono<Object> execute(Update update, TgSession tgSession) {
     log.debug("m: " + update.getMessage().getText());
     return Mono.empty();
   }

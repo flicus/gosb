@@ -6,6 +6,8 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.client.annotation.Client;
 
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodBoolean;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
 import org.telegram.telegrambots.meta.api.methods.updates.GetUpdates;
 import org.telegram.telegrambots.meta.api.objects.ApiResponse;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -23,7 +25,7 @@ public interface TgClient {
 
   @SingleResult
   @Post("sendmessage")
-  Mono<ApiResponse<Message>> sendMessage(@Body BotApiMethod sendMessage);
+  Mono<ApiResponse<Object>> sendMessage(@Body BotApiMethod<?> sendMessage);
 
   @SingleResult
   @Post("deletemessage")

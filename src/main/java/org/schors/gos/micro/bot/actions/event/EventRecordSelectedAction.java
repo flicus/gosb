@@ -27,7 +27,7 @@ public class EventRecordSelectedAction extends BotAction {
   }
 
   @Override
-  public Mono<Message> execute(Update update, TgSession tgSession) {
+  public Mono<Object> execute(Update update, TgSession tgSession) {
     String value = (String) tgSession.remove("event_value");
     String id = update.getCallbackQuery().getData();
     EventRecord eventRecord = new EventRecord(new Date().toString(), value);

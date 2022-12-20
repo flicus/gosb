@@ -19,7 +19,7 @@ public class ShowRecordAction extends BotAction {
   private EventRepository repository;
 
   @Override
-  public Mono<Message> execute(Update update, TgSession tgSession) {
+  public Mono<Object> execute(Update update, TgSession tgSession) {
     tgSession.put("eventRecord", "");
     return repository.getEvents()
       .map(event -> InlineKeyboardButton.builder().text(event.getName()).callbackData(event.getId()).build())

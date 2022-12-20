@@ -20,7 +20,7 @@ public class EventAddAction extends BotAction {
   private EventRepository repository;
 
   @Override
-  public Mono<Message> execute(Update update, TgSession tgSession) {
+  public Mono<Object> execute(Update update, TgSession tgSession) {
     log.debug("### execute");
     String[] list = update.getMessage().getText().split(" ");
     if (list.length != 2) return reply("Срань какая то", update);

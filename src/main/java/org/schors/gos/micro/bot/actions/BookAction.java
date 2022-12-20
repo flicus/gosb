@@ -20,7 +20,7 @@ public class BookAction extends BotAction {
   }
 
   @Override
-  public Mono<Message> execute(Update update, TgSession tgSession) {
+  public Mono<Object> execute(Update update, TgSession tgSession) {
     return reply("Hello", update);
   }
 }

@@ -28,7 +28,7 @@ public class EventRecordAction extends BotAction {
   }
 
   @Override
-  public Mono<Message> execute(Update update, TgSession tgSession) {
+  public Mono<Object> execute(Update update, TgSession tgSession) {
     log.debug("### execute");
     String[] list = update.getMessage().getText().split(" ");
     if (list.length > 1) {

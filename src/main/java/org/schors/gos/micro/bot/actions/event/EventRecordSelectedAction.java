@@ -31,8 +31,9 @@ public class EventRecordSelectedAction extends BotAction {
     String value = (String) tgSession.remove("event_value");
     String id = update.getCallbackQuery().getData();
     EventRecord eventRecord = new EventRecord(new Date().toString(), value);
-    log.debug("# event record: ", eventRecord);
-    return repository.createRecord(id, eventRecord)
+    log.debug("### creating event record: ", eventRecord);
+    return replyCallback(update)
+      .flatMap(message -> repository.createRecord(id, eventRecord))
       .flatMap((record) -> replyCallback("Добавил", update));
   }
 }

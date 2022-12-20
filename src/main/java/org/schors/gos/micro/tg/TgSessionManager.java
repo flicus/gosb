@@ -26,9 +26,11 @@ public class TgSessionManager {
       .map(sessionId -> {
         TgSession session = sessions.getIfPresent(sessionId);
         if (session == null) {
+          log.debug("### new session: {}", sessionId);
           session = new TgSession();
           sessions.put(sessionId, session);
         }
+        log.debug("### session: {}", sessionId);
         return session;
       });
   }

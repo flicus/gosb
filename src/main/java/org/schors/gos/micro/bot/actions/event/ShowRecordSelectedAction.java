@@ -2,7 +2,6 @@ package org.schors.gos.micro.bot.actions.event;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import lombok.extern.slf4j.Slf4j;
 import org.schors.gos.micro.bot.BotAction;
 import org.schors.gos.micro.model.EventRecord;
 import org.schors.gos.micro.repository.EventRepository;
@@ -13,9 +12,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.Date;
 
-@Slf4j
 @Singleton
-public class EventRecordSelectedAction extends BotAction {
+public class ShowRecordSelectedAction extends BotAction {
 
   @Inject
   private EventRepository repository;
@@ -23,16 +21,16 @@ public class EventRecordSelectedAction extends BotAction {
   @Override
   public Boolean match(Update update, TgSession tgSession) {
     return update.hasCallbackQuery()
-      && tgSession.containsKey("event_value");
+      && tgSession.containsKey("eventRecord");
   }
 
   @Override
   public Mono<Message> execute(Update update, TgSession tgSession) {
-    String value = (String) tgSession.remove("event_value");
+    String value = (String) tgSession.remove("eventRecord");
     String id = update.getCallbackQuery().getData();
-    EventRecord eventRecord = new EventRecord(new Date().toString(), value);
-    log.debug("# event record: ", eventRecord);
-    return repository.createRecord(id, eventRecord)
-      .flatMap((record) -> replyCallback("Добавил", update));
+    return repository.getRecords(id, 10)
+      .map(eventRecord -> eventRecord.getValue())
+      .reduce((s, s2) -> s.concat(", ").concat(s2))
+      .flatMap(s -> replyCallback(s, update));
   }
 }

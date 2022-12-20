@@ -44,12 +44,12 @@ public class TgReceiver {
         .ifPresent(updateConsumer -> {
           GetUpdates request = GetUpdates.builder().limit(100).timeout(50).offset(lastReceivedUpdate + 1).build();
           tgClient.getUpdates(request)
-            .log()
             .flatMapMany(arrayListApiResponse -> Flux.fromIterable(arrayListApiResponse.getResult()))
             .filter(update -> lastReceivedUpdate < update.getUpdateId())
             .doOnNext(update -> {
               if (lastReceivedUpdate < update.getUpdateId()) {
                 lastReceivedUpdate = update.getUpdateId();
+                log.debug(update.toString());
               }
             })
             .doFinally(signalType -> httpExecutor.schedule(new Worker(), 500, TimeUnit.MILLISECONDS))

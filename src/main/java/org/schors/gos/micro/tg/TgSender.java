@@ -22,9 +22,9 @@ public class TgSender {
   }
 
   public Mono<Message> send(BotApiMethod message) {
+    log.debug(message.toString());
     return tgClient
       .sendMessage(message)
-      .log()
       .map(ApiResponse::getResult);
   }
 

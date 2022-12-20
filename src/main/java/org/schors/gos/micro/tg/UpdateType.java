@@ -14,7 +14,7 @@ public enum UpdateType implements Predicate<Update> {
   EDITED_CHANNEL_POST(Update::hasEditedChannelPost, update -> update.getEditedChannelPost().getFrom(), update -> update.getEditedChannelPost().getChatId()),
   INLINE_QUERY(Update::hasInlineQuery, update -> update.getInlineQuery().getFrom(), update -> null),
   CHOSEN_INLINE_RESULT(Update::hasChosenInlineQuery, update -> update.getChosenInlineQuery().getFrom(), update -> null),
-  CALLBACK_QUERY(Update::hasCallbackQuery, update -> update.getCallbackQuery().getFrom(), update -> null),
+  CALLBACK_QUERY(Update::hasCallbackQuery, update -> update.getCallbackQuery().getFrom(), update -> update.getCallbackQuery().getMessage().getChatId()),
   SHIPPING_QUERY(Update::hasShippingQuery, update -> update.getShippingQuery().getFrom(), update -> null),
   PRE_CHECKOUT_QUERY(Update::hasPreCheckoutQuery, update -> update.getPreCheckoutQuery().getFrom(), update -> null),
   POLL(Update::hasPoll, update -> null, update -> null),

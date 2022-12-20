@@ -24,7 +24,7 @@ public class EventRecordAction extends BotAction {
   public Boolean match(Update update, TgSession tgSession) {
     return update.hasMessage()
         && update.getMessage().hasText()
-        && update.getMessage().getText().startsWith("/event");
+        && update.getMessage().getText().startsWith("/eventRecord");
   }
 
   @Override

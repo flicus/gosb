@@ -36,6 +36,6 @@ public class ShowRecordAction extends BotAction {
   public Boolean match(Update update, TgSession tgSession) {
     return update.hasMessage()
       && update.getMessage().hasText()
-      && update.getMessage().getText().startsWith("/showEvent");
+      && update.getMessage().getText().startsWith("/eventShow");
   }
 }

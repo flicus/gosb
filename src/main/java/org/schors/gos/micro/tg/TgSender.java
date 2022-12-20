@@ -22,9 +22,12 @@ public class TgSender {
   }
 
   public Mono<Message> send(BotApiMethod message) {
-    log.debug(message.toString());
+    log.debug("###> {}", message);
     return tgClient
       .sendMessage(message)
+      .doOnEach(apiResponseSignal -> {
+        log.debug("#< {}", apiResponseSignal.get());
+      })
       .map(ApiResponse::getResult);
   }
 

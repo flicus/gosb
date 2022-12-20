@@ -2,6 +2,7 @@ package org.schors.gos.micro.bot.actions.event;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 import org.schors.gos.micro.bot.BotAction;
 import org.schors.gos.micro.model.Event;
 import org.schors.gos.micro.repository.EventRepository;
@@ -12,6 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import reactor.core.publisher.Mono;
 
 @Singleton
+@Slf4j
 public class EventListAction extends BotAction {
 
   @Inject
@@ -19,6 +21,7 @@ public class EventListAction extends BotAction {
 
   @Override
   public Mono<Message> execute(Update update, TgSession tgSession) {
+    log.debug("### execute");
     return repository.getEvents()
       .map(event -> event.getName())
       .reduce((s, s2) -> s.concat(", ").concat(s2))

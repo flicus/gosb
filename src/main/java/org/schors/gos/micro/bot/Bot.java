@@ -61,7 +61,7 @@ public class Bot {
 
     receiver
       .subscribe(update -> {
-        log.debug(update.toString());
+//        log.debug(update.toString());
         Optional<TgSession> tgSession = sessionManager.getSession(update);
         if (tgSession.isPresent()) {
           actions.stream()

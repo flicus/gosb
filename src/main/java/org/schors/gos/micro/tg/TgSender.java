@@ -22,7 +22,10 @@ public class TgSender {
   }
 
   public Mono<Message> send(BotApiMethod message) {
-    return tgClient.sendMessage(message).map(ApiResponse::getResult);
+    return tgClient
+      .sendMessage(message)
+      .log()
+      .map(ApiResponse::getResult);
   }
 
   public Mono<Boolean> delete(BotApiMethod message) {

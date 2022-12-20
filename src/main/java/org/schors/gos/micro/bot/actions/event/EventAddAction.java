@@ -2,6 +2,7 @@ package org.schors.gos.micro.bot.actions.event;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 import org.schors.gos.micro.bot.BotAction;
 import org.schors.gos.micro.model.Event;
 import org.schors.gos.micro.repository.EventRepository;
@@ -12,6 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import reactor.core.publisher.Mono;
 
 @Singleton
+@Slf4j
 public class EventAddAction extends BotAction {
 
   @Inject
@@ -19,6 +21,7 @@ public class EventAddAction extends BotAction {
 
   @Override
   public Mono<Message> execute(Update update, TgSession tgSession) {
+    log.debug("### execute");
     String[] list = update.getMessage().getText().split(" ");
     if (list.length != 2) return reply("Срань какая то", update);
 

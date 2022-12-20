@@ -1,4 +1,4 @@
-package org.schors.gos.micro.bot.actions;
+package org.schors.gos.micro.bot.actions.event;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 import java.util.Date;
 
 @Singleton
-public class EventSelectedAction extends BotAction {
+public class EventRecordSelectedAction extends BotAction {
 
   @Inject
   private EventRepository repository;

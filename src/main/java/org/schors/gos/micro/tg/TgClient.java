@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import reactor.core.publisher.Mono;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @Client("telegram")
@@ -25,7 +26,7 @@ public interface TgClient {
 
   @SingleResult
   @Post("sendmessage")
-  Mono<ApiResponse<Object>> sendMessage(@Body BotApiMethod<?> sendMessage);
+  <T extends Serializable> Mono<ApiResponse<T>>  sendMessage(@Body BotApiMethod<T> sendMessage);
 
   @SingleResult
   @Post("deletemessage")

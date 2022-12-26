@@ -15,7 +15,7 @@ import java.util.Date;
 
 @Slf4j
 @Singleton
-public class EventRecordSelectedAction extends BotAction {
+public class EventRecordSelectedAction extends BotAction<Message> {
 
   @Inject
   private EventRepository repository;
@@ -27,13 +27,13 @@ public class EventRecordSelectedAction extends BotAction {
   }
 
   @Override
-  public Mono<Object> execute(Update update, TgSession tgSession) {
+  public Mono<Message> execute(Update update, TgSession tgSession) {
     String value = (String) tgSession.remove("event_value");
     String id = update.getCallbackQuery().getData();
     EventRecord eventRecord = new EventRecord(new Date().toString(), value);
     log.debug("### creating event record: ", eventRecord);
     return replyCallback(update)
       .flatMap(message -> repository.createRecord(id, eventRecord))
-      .flatMap((record) -> replyCallback("Добавил", update));
+      .flatMap((record) -> reply("Добавил", update));
   }
 }

@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 
 @Singleton
-public class UnknownAction extends BotAction {
+public class UnknownAction extends BotAction<Message> {
 
   @Override
   public Boolean match(Update update, TgSession tgSession) {
@@ -18,7 +18,7 @@ public class UnknownAction extends BotAction {
   }
 
   @Override
-  public Mono<Object> execute(Update update, TgSession tgSession) {
+  public Mono<Message> execute(Update update, TgSession tgSession) {
     return update.hasMessage() && update.getMessage().getChat().isUserChat()
     ? reply("Unknown command", update)
     : Mono.empty();

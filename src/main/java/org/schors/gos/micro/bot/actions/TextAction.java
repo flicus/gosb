@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Singleton
-public class TextAction extends BotAction {
+public class TextAction extends BotAction<Message> {
 
   @Override
   public int order() {
@@ -24,7 +24,7 @@ public class TextAction extends BotAction {
   }
 
   @Override
-  public Mono<Object> execute(Update update, TgSession tgSession) {
+  public Mono<Message> execute(Update update, TgSession tgSession) {
     log.debug("m: " + update.getMessage().getText());
     return Mono.empty();
   }

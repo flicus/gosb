@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 
 @Singleton
-public class BookAction extends BotAction {
+public class BookAction extends BotAction<Message> {
 
   @Override
   public Boolean match(Update update, TgSession tgSession) {
@@ -20,7 +20,7 @@ public class BookAction extends BotAction {
   }
 
   @Override
-  public Mono<Object> execute(Update update, TgSession tgSession) {
+  public Mono<Message> execute(Update update, TgSession tgSession) {
     return reply("Hello", update);
   }
 }

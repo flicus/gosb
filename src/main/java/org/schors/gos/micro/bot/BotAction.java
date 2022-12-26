@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import reactor.core.publisher.Mono;
 
 
-public abstract class BotAction implements ActionMatcher<Update, TgSession, Boolean>, ActionExecutor<Update, TgSession, Mono<Object>> {
+public abstract class BotAction<T> implements ActionMatcher<Update, TgSession, Boolean>, ActionExecutor<Update, TgSession, Mono<T>> {
 
   @Inject
   protected TgSender sender;
@@ -21,11 +21,11 @@ public abstract class BotAction implements ActionMatcher<Update, TgSession, Bool
     return 50;
   }
 
-  public Mono<Object> replyCallback(Update update) {
+  public Mono<Boolean> replyCallback(Update update) {
     return replyCallback(null, update);
   }
 
-  public Mono<Object> replyCallback(String text, Update update) {
+  public Mono<Boolean> replyCallback(String text, Update update) {
     AnswerCallbackQueryBuilder res = AnswerCallbackQuery.builder()
     .callbackQueryId(update.getCallbackQuery().getId());
     if (text != null) {
@@ -34,7 +34,7 @@ public abstract class BotAction implements ActionMatcher<Update, TgSession, Bool
     return sender.send(res.build());
   }
 
-  public Mono<Object> reply(String text, Update update) {
+  public Mono<Message> reply(String text, Update update) {
     return sender.send(SendMessage.builder()
     .text(text)
     .chatId(update.getMessage().getChatId())

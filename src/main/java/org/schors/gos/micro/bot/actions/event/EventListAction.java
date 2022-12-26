@@ -14,13 +14,13 @@ import reactor.core.publisher.Mono;
 
 @Singleton
 @Slf4j
-public class EventListAction extends BotAction {
+public class EventListAction extends BotAction<Message> {
 
   @Inject
   private EventRepository repository;
 
   @Override
-  public Mono<Object> execute(Update update, TgSession tgSession) {
+  public Mono<Message> execute(Update update, TgSession tgSession) {
     log.debug("### execute");
     return repository.getEvents()
       .map(event -> event.getName())

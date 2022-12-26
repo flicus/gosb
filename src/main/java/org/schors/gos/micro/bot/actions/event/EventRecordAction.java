@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 
 @Singleton
 @Slf4j
-public class EventRecordAction extends BotAction {
+public class EventRecordAction extends BotAction<Message> {
 
   @Inject
   private EventRepository repository;
@@ -28,7 +28,7 @@ public class EventRecordAction extends BotAction {
   }
 
   @Override
-  public Mono<Object> execute(Update update, TgSession tgSession) {
+  public Mono<Message> execute(Update update, TgSession tgSession) {
     log.debug("### execute");
     String[] list = update.getMessage().getText().split(" ");
     if (list.length > 1) {

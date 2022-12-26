@@ -14,13 +14,13 @@ import reactor.core.publisher.Mono;
 
 @Singleton
 @Slf4j
-public class EventAddAction extends BotAction {
+public class EventAddAction extends BotAction<Message> {
 
   @Inject
   private EventRepository repository;
 
   @Override
-  public Mono<Object> execute(Update update, TgSession tgSession) {
+  public Mono<Message> execute(Update update, TgSession tgSession) {
     log.debug("### execute");
     String[] list = update.getMessage().getText().split(" ");
     if (list.length != 2) return reply("Срань какая то", update);

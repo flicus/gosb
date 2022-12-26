@@ -13,13 +13,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import reactor.core.publisher.Mono;
 
 @Singleton
-public class ShowRecordAction extends BotAction {
+public class ShowRecordAction extends BotAction<Message> {
 
   @Inject
   private EventRepository repository;
 
   @Override
-  public Mono<Object> execute(Update update, TgSession tgSession) {
+  public Mono<Message> execute(Update update, TgSession tgSession) {
     tgSession.put("eventRecord", "");
     return repository.getEvents()
       .map(event -> InlineKeyboardButton.builder().text(event.getName()).callbackData(event.getId()).build())

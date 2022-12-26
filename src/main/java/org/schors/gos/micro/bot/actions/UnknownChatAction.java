@@ -16,7 +16,7 @@ import java.util.Set;
 
 @Slf4j
 @Singleton
-public class UnknownChatAction extends BotAction {
+public class UnknownChatAction extends BotAction<Message> {
 
     @Value("${gosb.bot.readGroups}")
     private Set<Long> readGroups;
@@ -34,7 +34,7 @@ public class UnknownChatAction extends BotAction {
     }
 
     @Override
-    public Mono<Object> execute(Update update, TgSession session) {
+    public Mono<Message> execute(Update update, TgSession session) {
 
         log.warn(String.format("!! unwanted message: %s, type: %s, name: %s, who: 's%' s% s%",
         update.getMessage().getText(),

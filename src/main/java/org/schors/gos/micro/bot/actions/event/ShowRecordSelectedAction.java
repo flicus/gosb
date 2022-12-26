@@ -15,7 +15,7 @@ import java.util.Date;
 
 @Singleton
 @Slf4j
-public class ShowRecordSelectedAction extends BotAction {
+public class ShowRecordSelectedAction extends BotAction<Message> {
 
   @Inject
   private EventRepository repository;
@@ -27,7 +27,7 @@ public class ShowRecordSelectedAction extends BotAction {
   }
 
   @Override
-  public Mono<Object> execute(Update update, TgSession tgSession) {
+  public Mono<Message> execute(Update update, TgSession tgSession) {
     String value = (String) tgSession.remove("eventRecord");
     String id = update.getCallbackQuery().getData();
     log.debug("### looking records for {}", id);

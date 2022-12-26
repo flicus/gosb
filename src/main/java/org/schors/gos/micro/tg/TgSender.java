@@ -11,6 +11,8 @@ import org.telegram.telegrambots.meta.api.objects.ApiResponse;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import reactor.core.publisher.Mono;
 
+import java.io.Serializable;
+
 
 @Slf4j
 @Singleton
@@ -23,7 +25,7 @@ public class TgSender {
     this.tgClient = tgClient;
   }
 
-  public Mono<Object> send(BotApiMethod<?> message) {
+  public <T extends Serializable> Mono<T> send(BotApiMethod<T> message) {
     log.debug("###> {}", message);
     return tgClient
       .sendMessage(message)

@@ -22,11 +22,13 @@
     <encoder>
       <pattern>%d{HH:mm:ss} [%thread] %-5level %logger{35} - %msg%n</pattern>
     </encoder>
-  </appender> 
+  </appender>
 
   <root>
     <appender-ref ref="STDOUT" level="INFO"/>
     <appender-ref ref="FILE" level="DEBUG"/>
   </root>
-  
+
+  <logger name="io.micronaut.http.client" level="TRACE"/>
+
 </configuration>

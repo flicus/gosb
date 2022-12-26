@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import reactor.core.publisher.Mono;
 
 
-public abstract class BotAction<T> implements ActionMatcher<Update, TgSession, Boolean>, ActionExecutor<Update, TgSession, Mono<T>> {
+public abstract class BotAction<T> implements ActionMatcher<Update, TgSession>, ActionExecutor<Update, TgSession, T> {
 
   @Inject
   protected TgSender sender;

@@ -35,6 +35,7 @@ public class ShowRecordSelectedAction extends BotAction<Message> {
       .flatMapMany(message -> repository.getRecords(id, 10))
       .map(eventRecord -> eventRecord.getValue())
       .reduce((s, s2) -> s.concat(", ").concat(s2))
+      .or(Mono.just("Ничего не найдено"))
       .flatMap(s -> reply(s, update));
   }
 }
